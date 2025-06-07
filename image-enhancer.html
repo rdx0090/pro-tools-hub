@@ -26,6 +26,7 @@
         .card { background-color: var(--card-color); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 24px; }
         .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
         .btn-primary:hover { background-color: var(--accent-hover); }
+        .btn-primary:disabled { background-color: #374151; cursor: not-allowed; }
         .btn-secondary { background-color: #4b5563; }
         
         .workspace { display: grid; grid-template-columns: 3fr 1fr; gap: 24px; align-items: flex-start; }
@@ -65,9 +66,7 @@
                 <div id="preview-container">
                     <img id="preview-image" src="" alt="Your uploaded image">
                 </div>
-                <div class="comparison-slider-container">
-                    <!-- Slider yahan JS se add hoga -->
-                </div>
+                <div class="comparison-slider-container"></div>
             </div>
             
             <!-- Step 3: Controls -->
@@ -82,7 +81,7 @@
                 <button id="enhance-btn" class="btn-primary" style="width:100%; margin-top: 16px;">✨ Enhance Image</button>
                 <div id="loader-container" class="loader-container"><div class="loader"></div><p>Processing...</p></div>
                 <p class="processing-feedback" id="feedback-text"></p>
-                <button id="download-btn" class="btn-primary btn-secondary" style="display:none;">Download Image</button>
+                <button id="download-btn" class="btn-primary btn-secondary" style="display:none;">Download Enhanced Image</button>
             </div>
         </div>
 
@@ -95,7 +94,6 @@
     <canvas id="processing-canvas" style="display:none;"></canvas>
 
     <script>
-        // DOM Elements
         const uploadBtn = document.getElementById('upload-btn');
         const fileInput = document.getElementById('file-input');
         const workspace = document.getElementById('workspace');
@@ -108,98 +106,91 @@
         const feedbackText = document.getElementById('feedback-text');
         const processingCanvas = document.getElementById('processing-canvas');
         const ctx = processingCanvas.getContext('2d');
-
         const filterInputs = document.querySelectorAll('.controls input[type="range"]');
 
         let originalImage = null;
         let originalFileName = 'enhanced.png';
 
-        // Event Listeners
         uploadBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', handleImageUpload);
         enhanceBtn.addEventListener('click', processAndShowComparison);
-        downloadBtn.addEventListener('click', () => {
-             const link = document.createElement('a');
-             link.download = originalFileName;
-             link.href = processingCanvas.toDataURL('image/png');
-             link.click();
-        });
+        downloadBtn.addEventListener('click', downloadImage); // Updated function call
         filterInputs.forEach(input => input.addEventListener('input', updateLabels));
 
-
-        // Main Functions
         function handleImageUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
+            const file = e.target.files[0]; if (!file) return;
             document.getElementById('upload-card').style.display = 'none';
             workspace.style.display = 'grid';
             originalFileName = file.name.replace(/\.[^/.]+$/, "") + "-enhanced.png";
-
             const reader = new FileReader();
             reader.onload = (event) => {
                 originalImage = new Image();
-                originalImage.onload = () => {
-                    previewImage.src = originalImage.src;
-                };
+                originalImage.onload = () => { previewImage.src = originalImage.src; };
                 originalImage.src = event.target.result;
             };
             reader.readAsDataURL(file);
         }
         
         function updateLabels() {
-            filterInputs.forEach(input => {
-                document.getElementById(`${input.id}-value`).textContent = input.value;
-            });
+            filterInputs.forEach(input => { document.getElementById(`${input.id}-value`).textContent = input.value; });
         }
 
         function processAndShowComparison() {
             if (!originalImage) return;
-
-            // Show loader, hide buttons
             enhanceBtn.style.display = 'none';
             downloadBtn.style.display = 'none';
             feedbackText.style.display = 'none';
             loaderContainer.style.display = 'block';
-
             const startTime = performance.now();
-
-            // Simulate a short processing time
             setTimeout(() => {
-                const filterString = Array.from(filterInputs).map(input => {
-                    return `${input.id}(${input.value}%)`;
-                }).join(' ');
-
+                const filterString = Array.from(filterInputs).map(input => `${input.id}(${input.value}%)`).join(' ');
                 processingCanvas.width = originalImage.width;
                 processingCanvas.height = originalImage.height;
                 ctx.filter = filterString;
                 ctx.drawImage(originalImage, 0, 0);
                 const enhancedSrc = processingCanvas.toDataURL('image/png');
-                
-                // Hide loader
                 loaderContainer.style.display = 'none';
-
-                // Celebration!
                 confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
-                const endTime = performance.now();
-                const duration = ((endTime - startTime) / 1000).toFixed(1);
+                const duration = ((performance.now() - startTime) / 1000).toFixed(1);
                 feedbackText.textContent = `Enhanced in ${duration}s!`;
                 feedbackText.style.display = 'block';
-
-                // Show slider and download button
                 previewContainer.style.display = 'none';
                 sliderContainer.style.display = 'block';
-                sliderContainer.innerHTML = `
-                    <img-comparison-slider>
-                        <img slot="first" src="${originalImage.src}">
-                        <img slot="second" src="${enhancedSrc}">
-                    </img-comparison-slider>
-                `;
+                sliderContainer.innerHTML = `<img-comparison-slider><img slot="first" src="${originalImage.src}"><img slot="second" src="${enhancedSrc}"></img-comparison-slider>`;
                 downloadBtn.style.display = 'block';
                 enhanceBtn.textContent = '✨ Enhance Again';
                 enhanceBtn.style.display = 'block';
+            }, 500);
+        }
 
-            }, 500); // 0.5 second delay to make it feel like it's working
+        // *** YEH FUNCTION UPDATE HUA HAI ***
+        function downloadImage() {
+            if (!originalImage) return;
+
+            downloadBtn.disabled = true;
+            downloadBtn.textContent = "Preparing Download...";
+
+            // canvas.toBlob() istemal karein, jo bahut fast hai
+            processingCanvas.toBlob((blob) => {
+                // Celebration ab yahan hoga, jab file taiyaar hai
+                confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+
+                // Download link banayein
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.download = originalFileName;
+                link.href = url;
+                
+                // Turant download start karein
+                link.click();
+                
+                // Memory ko free karein
+                URL.revokeObjectURL(url);
+                
+                // Button ko wapas normal state mein layein
+                downloadBtn.disabled = false;
+                downloadBtn.textContent = "Download Enhanced Image";
+            }, 'image/png'); // Format batayein
         }
     </script>
 </body>
