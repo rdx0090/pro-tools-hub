@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Compressor - Pro Tools Hub</title>
 
-    <!-- External Libraries (No changes here) -->
+    <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
@@ -14,7 +14,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Bilkul Same Hai, Koi Change Nahi */
         :root {
             --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
             --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
@@ -29,31 +28,34 @@
         .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
         .btn-primary:hover { background-color: var(--accent-hover); }
         .btn-primary:disabled { background-color: #374151; cursor: not-allowed; }
-        .drop-zone { border: 2px dashed var(--border-color); border-radius: 12px; padding: 48px 24px; text-align: center; cursor: pointer; transition: background-color 0.2s; }
+        .drop-zone { border: 2px dashed var(--border-color); border-radius: 12px; padding: 48px 24px; text-align: center; cursor: pointer; transition: background-color 0.2s, border-color 0.2s; }
         .drop-zone.drag-over { background-color: rgba(59, 130, 246, 0.1); border-color: var(--accent-color); }
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; margin-bottom: 8px; color: var(--text-secondary); }
         .form-group input[type="range"] { width: 100%; }
         .image-list { margin-top: 24px; display: grid; grid-template-columns: 1fr; gap: 16px; }
-        .image-card { background-color: var(--bg-color); border-radius: 8px; padding: 16px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 16px; }
-        .image-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+        .image-card { background-color: var(--bg-color); border-radius: 8px; padding: 16px; border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px; }
+        .image-main-content { display: flex; align-items: center; gap: 16px; width: 100%; }
+        .image-preview { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
         .image-info { flex-grow: 1; }
         .filename { font-weight: 600; word-break: break-all; }
-        .size-info { font-size: 0.9rem; color: var(--text-secondary); margin-top: 8px; }
+        .size-info { font-size: 0.9rem; color: var(--text-secondary); margin-top: 4px; }
         .original { text-decoration: line-through; } .arrow { color: var(--text-color); }
         .new { color: var(--success-color); font-weight: 600; }
         .saving { color: var(--success-color); font-weight: 600; margin-left: 8px; }
-        .loader { width: 20px; height: 20px; border: 3px solid var(--border-color); border-top: 3px solid var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .progress-wrapper { width: 100%; text-align: right; }
+        .progress-bar-individual-container { background-color: var(--border-color); border-radius: 4px; height: 6px; overflow: hidden; }
+        .progress-bar-individual { width: 0%; height: 100%; background-color: var(--accent-color); transition: width 0.1s linear; }
+        .progress-text-individual { font-size: 0.8rem; color: var(--text-secondary); margin-top: 4px; }
         footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- HTML Bilkul Same Hai, Koi Change Nahi -->
+        <!-- HTML Section (No major changes, just structure for progress bars) -->
         <header>
             <h1>🗜️ Image Compressor</h1>
-            <p>Reduce the file size of your images in bulk. Fast, private, and powerful.</p>
+            <p>High-performance bulk image compression. Your privacy is protected.</p>
         </header>
 
         <div class="card">
@@ -80,8 +82,8 @@
             <p id="total-savings" style="color:var(--text-secondary); font-size: 1.1rem; font-weight: 500;"></p>
             <div id="progress-area" style="display:none; margin-top: 16px; margin-bottom: 16px;">
                 <p id="progress-text" style="text-align:center; margin-bottom:8px; font-weight:500;"></p>
-                <div id="progress-container" style="background-color: var(--border-color); border-radius: 8px; overflow: hidden;">
-                    <div id="progress-bar" style="width: 0%; height: 10px; background-color: var(--accent-color); transition: width 0.3s ease, background-color 0.3s ease;"></div>
+                <div style="background-color: var(--border-color); border-radius: 8px; overflow: hidden;">
+                    <div id="progress-bar-overall" style="width: 0%; height: 10px; background-color: var(--accent-color); transition: width 0.3s ease;"></div>
                 </div>
             </div>
             <div id="image-list" class="image-list"></div>
@@ -94,9 +96,7 @@
     </div>
 
     <script>
-        // --- START OF JAVASCRIPT ---
-        // (Sirf JS mein performance ke liye changes kiye gaye hain)
-
+        // --- START OF NEW, OPTIMIZED JAVASCRIPT ---
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const compressBtn = document.getElementById('compress-btn');
@@ -108,122 +108,176 @@
         const downloadAllBtn = document.getElementById('download-all-btn');
         const progressArea = document.getElementById('progress-area');
         const progressText = document.getElementById('progress-text');
-        const progressBar = document.getElementById('progress-bar');
+        const progressBarOverall = document.getElementById('progress-bar-overall');
         
         let filesToProcess = [];
         let compressedFiles = [];
+        const CONCURRENT_LIMIT = navigator.hardwareConcurrency || 4; // Smartly decide how many tasks to run at once
 
-        // Event listeners (same as before)
+        // Event listeners
         dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFileSelection(e.target.files));
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            handleFileSelection(e.dataTransfer.files);
-        });
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFileSelection(e.dataTransfer.files); });
         qualitySlider.addEventListener('input', (e) => { qualityValue.textContent = e.target.value; });
-        compressBtn.addEventListener('click', processImagesInParallel); // Naye function ko call karenge
+        compressBtn.addEventListener('click', processImagesInQueue);
         downloadAllBtn.addEventListener('click', downloadAllAsZip);
 
         function handleFileSelection(files) {
             filesToProcess = Array.from(files).filter(file => file.type.startsWith('image/'));
             if (filesToProcess.length > 0) {
                 compressBtn.disabled = false;
-                dropZone.querySelector('p').innerHTML = `<strong>${filesToProcess.length} image(s) selected.</strong> Click to change selection.`;
+                dropZone.querySelector('p').innerHTML = `<strong>${filesToProcess.length} image(s) selected.</strong> Ready to compress!`;
             } else {
                 compressBtn.disabled = true;
                 dropZone.querySelector('p').innerHTML = `<strong>Drag & drop your images here</strong> or click to browse`;
             }
+            resultsContainer.style.display = 'none';
+            imageList.innerHTML = '';
         }
 
-        async function processImagesInParallel() { // NAYA, TEZ FUNCTION
+        // --- NAYA, TEZ aur SMART function ---
+        async function processImagesInQueue() {
             if (filesToProcess.length === 0) return;
             
-            // UI ko lock karna (same as before)
+            // Setup UI
+            const startTime = performance.now();
+            setupUIForCompression();
+            const fileQueue = [...filesToProcess];
+            let processedCount = 0;
+            
+            const processNext = async () => {
+                if (fileQueue.length === 0) return; // All files are being processed
+                
+                const fileIndex = filesToProcess.length - fileQueue.length;
+                const file = fileQueue.shift();
+                const imageCard = document.getElementById(`image-card-${fileIndex}`);
+                const individualProgressBar = imageCard.querySelector('.progress-bar-individual');
+                const individualProgressText = imageCard.querySelector('.progress-text-individual');
+
+                try {
+                    const options = {
+                        initialQuality: parseFloat(qualitySlider.value),
+                        maxWidthOrHeight: 1920,
+                        useWebWorker: true,
+                        onProgress: (progress) => {
+                           if (individualProgressBar) individualProgressBar.style.width = progress + '%';
+                           if (individualProgressText) individualProgressText.textContent = `Compressing... ${Math.round(progress)}%`;
+                        },
+                    };
+                    const compressedFile = await imageCompression(file, options);
+                    
+                    compressedFiles.push({ name: compressedFile.name, file: compressedFile, originalSize: file.size });
+                    updateImageCard(imageCard, file, compressedFile);
+
+                } catch (error) {
+                    console.error('Compression Error:', error);
+                    updateImageCardWithError(imageCard, 'Failed');
+                } finally {
+                    processedCount++;
+                    updateOverallProgress(processedCount, filesToProcess.length);
+                    
+                    if (processedCount === filesToProcess.length) {
+                        finishCompression(startTime);
+                    } else {
+                        await processNext(); // Start next file in the queue
+                    }
+                }
+            };
+            
+            // Start the concurrent workers
+            const workers = [];
+            for (let i = 0; i < Math.min(CONCURRENT_LIMIT, fileQueue.length); i++) {
+                workers.push(processNext());
+            }
+            await Promise.all(workers);
+        }
+
+        function setupUIForCompression() {
             compressBtn.disabled = true;
-            compressBtn.textContent = 'Compressing...';
+            compressBtn.textContent = 'Processing...';
             downloadAllBtn.disabled = true;
             resultsContainer.style.display = 'block';
             imageList.innerHTML = '';
             totalSavingsEl.innerHTML = '';
             progressArea.style.display = 'block';
-            progressBar.style.width = '0%';
-            progressBar.style.backgroundColor = 'var(--accent-color)';
-            progressText.textContent = 'Starting compression...';
-            
-            const startTime = performance.now();
+            progressBarOverall.style.width = '0%';
+            progressText.textContent = `Preparing... (0/${filesToProcess.length})`;
             compressedFiles = [];
 
-            // Har file ke liye ek compression task (promise) banayein
-            const compressionPromises = filesToProcess.map(file => {
-                const options = {
-                    initialQuality: parseFloat(qualitySlider.value),
-                    maxWidthOrHeight: 1920, // Library ke built-in resize ka istemal
-                    useWebWorker: true,
-                };
-                // Original file ko sath mein pass karein taki hum use baad mein access kar sakein
-                return imageCompression(file, options)
-                    .then(compressedFile => ({ status: 'fulfilled', originalFile: file, compressedFile }))
-                    .catch(error => ({ status: 'rejected', originalFile: file, reason: error }));
+            // Pre-populate the list with cards
+            filesToProcess.forEach((file, index) => {
+                const imageCard = createImageCard(file, index);
+                imageList.appendChild(imageCard);
             });
+        }
+        
+        function updateOverallProgress(processed, total) {
+            const percent = (processed / total) * 100;
+            progressBarOverall.style.width = percent + '%';
+            progressText.textContent = `Completed ${processed} of ${total} images`;
+        }
 
-            // Saare tasks ko ek saath chalaayein aur sabke poora hone ka intezaar karein
-            const results = await Promise.all(compressionPromises);
+        function finishCompression(startTime) {
+            const endTime = performance.now();
+            const duration = (endTime - startTime) / 1000;
             
             let totalOriginalSize = 0;
             let totalCompressedSize = 0;
-            let processedCount = 0;
+            compressedFiles.forEach(f => {
+                totalOriginalSize += f.originalSize;
+                totalCompressedSize += f.file.size;
+            });
 
-            // Ab results ko process karein aur UI update karein
-            for (const result of results) {
-                processedCount++;
-                const imageCard = createImageCard(result.originalFile);
-                imageList.appendChild(imageCard);
-
-                if (result.status === 'fulfilled') {
-                    const { originalFile, compressedFile } = result;
-                    compressedFiles.push({ name: compressedFile.name, file: compressedFile });
-                    totalOriginalSize += originalFile.size;
-                    totalCompressedSize += compressedFile.size;
-                    updateImageCard(imageCard, originalFile, compressedFile);
-                } else {
-                    console.error('Compression Error:', result.reason);
-                    updateImageCardWithError(imageCard, 'Failed');
-                }
-                
-                // Progress bar update karein
-                progressText.textContent = `Processing... (${processedCount}/${filesToProcess.length})`;
-                progressBar.style.width = `${(processedCount / filesToProcess.length) * 100}%`;
-            }
-
-            // Final UI updates (same as before)
-            const endTime = performance.now();
-            const duration = (endTime - startTime) / 1000;
             updateTotalSavings(totalOriginalSize, totalCompressedSize, duration);
             compressBtn.disabled = false;
             compressBtn.textContent = 'Compress Again';
-            if (compressedFiles.length > 0) { downloadAllBtn.disabled = false; }
-            progressText.textContent = `All ${processedCount} images compressed successfully!`;
-            progressBar.style.backgroundColor = 'var(--success-color)';
-
-            // Confetti effect (same as before)
             if (compressedFiles.length > 0) {
+                downloadAllBtn.disabled = false;
+                // Confetti!
                 const end = Date.now() + (2 * 1000);
                 (function frame() {
-                    confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 } });
-                    confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 } });
-                    if (Date.now() < end) { requestAnimationFrame(frame); }
+                    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+                    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+                    if (Date.now() < end) requestAnimationFrame(frame);
                 }());
             }
         }
+        
+        function createImageCard(file, index) {
+            const card = document.createElement('div');
+            card.className = 'image-card';
+            card.id = `image-card-${index}`;
+            card.innerHTML = `
+                <div class="image-main-content">
+                    <img src="${URL.createObjectURL(file)}" alt="${file.name}" class="image-preview">
+                    <div class="image-info">
+                        <div class="filename">${file.name}</div>
+                        <div class="size-info">${formatBytes(file.size)}</div>
+                    </div>
+                </div>
+                <div class="progress-wrapper">
+                    <div class="progress-bar-individual-container">
+                        <div class="progress-bar-individual"></div>
+                    </div>
+                    <div class="progress-text-individual">Waiting in queue...</div>
+                </div>
+            `;
+            return card;
+        }
 
-        // Baaki saare helper functions bilkul same hain, koi change nahi
+        function updateImageCard(card, originalFile, compressedFile) {
+            const savingPercent = ((originalFile.size - compressedFile.size) / originalFile.size * 100).toFixed(1);
+            card.querySelector('.size-info').innerHTML = `<span class="original">${formatBytes(originalFile.size)}</span><span class="arrow"> → </span><span class="new">${formatBytes(compressedFile.size)}</span><span class="saving">(${savingPercent}% off)</span>`;
+            card.querySelector('.progress-wrapper').innerHTML = `<span style="color: var(--success-color); font-weight: 600;">Completed</span>`;
+        }
+
+        function updateImageCardWithError(card, message) {
+            card.querySelector('.progress-wrapper').innerHTML = `<span style="color: var(--error-color); font-weight: 600;">${message}</span>`;
+        }
+        
         function updateTotalSavings(original, compressed, duration) { if (original === 0) { totalSavingsEl.textContent = ''; return; } const totalSavingPercent = ((original - compressed) / original * 100).toFixed(1); totalSavingsEl.innerHTML = `Total Savings: <span style="color:var(--success-color)">${formatBytes(original - compressed)} (${totalSavingPercent}%)</span> | Time: ${duration.toFixed(2)}s`; }
-        function createImageCard(file) { const card = document.createElement('div'); card.className = 'image-card'; card.innerHTML = `<img src="${URL.createObjectURL(file)}" alt="${file.name}" class="image-preview"><div class="image-info"><div class="filename">${file.name}</div><div class="size-info">${formatBytes(file.size)}</div></div><div class="loader"></div>`; return card; }
-        function updateImageCard(card, originalFile, compressedFile) { const savingPercent = ((originalFile.size - compressedFile.size) / originalFile.size * 100).toFixed(1); card.querySelector('.loader').remove(); card.querySelector('.size-info').innerHTML = `<span class="original">${formatBytes(originalFile.size)}</span><span class="arrow"> → </span><span class="new">${formatBytes(compressedFile.size)}</span><span class="saving">(${savingPercent}% off)</span>`; const downloadLink = document.createElement('a'); downloadLink.href = URL.createObjectURL(compressedFile); downloadLink.download = compressedFile.name; downloadLink.textContent = 'Download'; downloadLink.className = 'btn-primary'; downloadLink.style.cssText = 'padding: 6px 12px; font-size: 0.9rem;'; card.appendChild(downloadLink); }
-        function updateImageCardWithError(card, message) { card.querySelector('.loader').remove(); const errorSpan = document.createElement('span'); errorSpan.textContent = message; errorSpan.style.color = 'var(--error-color)'; card.appendChild(errorSpan); }
         async function downloadAllAsZip() { if (compressedFiles.length === 0) return; const zip = new JSZip(); compressedFiles.forEach(item => zip.file(item.name, item.file)); downloadAllBtn.textContent = 'Zipping...'; downloadAllBtn.disabled = true; const zipBlob = await zip.generateAsync({type:"blob"}); const link = document.createElement('a'); link.href = URL.createObjectURL(zipBlob); link.download = 'pro-compressed-images.zip'; link.click(); URL.revokeObjectURL(link.href); downloadAllBtn.textContent = 'Download All as ZIP'; downloadAllBtn.disabled = false; }
         function formatBytes(bytes, decimals = 2) { if (bytes === 0) return '0 Bytes'; const k = 1024; const sizes = ['Bytes', 'KB', 'MB', 'GB']; const i = Math.floor(Math.log(bytes) / Math.log(k)); return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i]; }
 
