@@ -8,22 +8,19 @@
     <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <!-- ✨ Nayi Library: Fireworks Effect ke liye -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* CSS bilkul same hai, koi change nahi */
         :root {
             --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
             --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
             --border-color: #374151; --success-color: #10b981; --error-color: #ef4444;
         }
-        body {
-            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
-            margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center; min-height: 100vh;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .container { width: 100%; max-width: 900px; }
         header { text-align: center; margin-bottom: 32px; }
         header h1 { font-size: 2.5rem; }
@@ -53,6 +50,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- Header, Uploader, and Settings sections bilkul same hain -->
         <header>
             <h1>🗜️ Image Compressor</h1>
             <p>Reduce the file size of your images in bulk. Fast, private, and powerful.</p>
@@ -75,6 +73,7 @@
         </div>
 
         <div id="results-container" class="card" style="display:none;">
+            <!-- ... -->
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h2>Results</h2>
                 <button id="download-all-btn" class="btn-primary" style="padding: 8px 16px;" disabled>Download All as ZIP</button>
@@ -90,7 +89,7 @@
 
             <div id="image-list" class="image-list"></div>
         </div>
-
+        
         <footer>
             <p><a href="index.html" style="color: var(--accent-color);">← Back to Hub</a></p>
             <p>© 2024 All rights reserved - Pro Tools Hub</p>
@@ -98,6 +97,7 @@
     </div>
 
     <script>
+        // DOM Elements sab same hain
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const compressBtn = document.getElementById('compress-btn');
@@ -114,15 +114,12 @@
         let filesToProcess = [];
         let compressedFiles = [];
 
+        // Saare Event Listeners same hain
         dropZone.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFileSelection(e.target.files));
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            handleFileSelection(e.dataTransfer.files);
-        });
+        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFileSelection(e.dataTransfer.files); });
         qualitySlider.addEventListener('input', (e) => { qualityValue.textContent = e.target.value; });
         compressBtn.addEventListener('click', processImages);
         downloadAllBtn.addEventListener('click', downloadAllAsZip);
@@ -141,6 +138,7 @@
         async function processImages() {
             if (filesToProcess.length === 0) return;
 
+            // UI Reset
             compressBtn.disabled = true;
             compressBtn.textContent = 'Compressing...';
             downloadAllBtn.disabled = true;
@@ -148,13 +146,8 @@
             imageList.innerHTML = '';
             totalSavingsEl.innerHTML = '';
             progressArea.style.display = 'block';
-            progressBar.style.width = '0%';
-            progressBar.style.backgroundColor = 'var(--accent-color)';
-            progressText.textContent = 'Preparing to compress...';
             
-            // ⏰ Time measurement shuru
             const startTime = performance.now();
-
             compressedFiles = [];
             let totalOriginalSize = 0;
             let totalCompressedSize = 0;
@@ -164,34 +157,43 @@
                 const imageCard = createImageCard(file);
                 imageList.appendChild(imageCard);
 
+                // Progress Bar ko har file ke liye reset karein
+                processedCount++;
+                progressBar.style.width = '0%';
+                progressBar.style.backgroundColor = 'var(--accent-color)';
+                progressText.textContent = `(${processedCount}/${filesToProcess.length}) Preparing "${file.name}"...`;
+
                 try {
-                    // 🚀 PERFORMANCE BOOST: Agar file 2MB se badi hai, to use pehle downscale karega.
                     const options = {
-                        maxSizeMB: 1, // Badi files ko pehle downscale karega
+                        // 🚀 TURBO SPEED BOOST 🚀
+                        maxWidthOrHeight: 1920, // Badi images ko 1920px par resize karega
+                        maxSizeMB: 1, // Agar fir bhi badi hai, to aur chhota karega
                         initialQuality: parseFloat(qualitySlider.value),
                         useWebWorker: true,
+
+                        // ✨ ASLI REAL-TIME PROGRESS BAR ✨
+                        onProgress: (progress) => {
+                            progressBar.style.width = progress + '%';
+                            progressText.textContent = `(${processedCount}/${filesToProcess.length}) Compressing "${file.name}" (${Math.round(progress)}%)`;
+                        },
                     };
+
                     const compressedFile = await imageCompression(file, options);
                     compressedFiles.push({name: compressedFile.name, file: compressedFile});
                     totalOriginalSize += file.size;
                     totalCompressedSize += compressedFile.size;
                     updateImageCard(imageCard, file, compressedFile);
+
                 } catch (error) {
                     console.error('Compression Error:', error);
                     updateImageCardWithError(imageCard, 'Failed');
                 }
-
-                processedCount++;
-                const percentComplete = Math.round((processedCount / filesToProcess.length) * 100);
-                progressBar.style.width = percentComplete + '%';
-                progressText.textContent = `Compressing: ${processedCount} of ${filesToProcess.length} (${percentComplete}%)`;
             }
 
-            // ⏰ Time measurement khatam aur calculate
             const endTime = performance.now();
-            const duration = (endTime - startTime) / 1000; // seconds mein
+            const duration = (endTime - startTime) / 1000;
 
-            // Final UI updates with time
+            // Final UI updates
             updateTotalSavings(totalOriginalSize, totalCompressedSize, duration);
             compressBtn.disabled = false;
             compressBtn.textContent = 'Compress Again';
@@ -199,55 +201,80 @@
                 downloadAllBtn.disabled = false;
             }
 
-            progressText.textContent = 'Compression Completed!';
+            // Progress Bar ko "Completed" state mein set karein
+            progressText.textContent = `All ${processedCount} images compressed successfully!`;
             progressBar.style.backgroundColor = 'var(--success-color)';
 
-            // 🎉 FIREWORKS EFFECT!
+            // 🎉 Fireworks Effect!
             if (compressedFiles.length > 0) {
-                // Thoda realistic feel ke liye
-                const duration = 2 * 1000;
-                const end = Date.now() + duration;
-
+                const end = Date.now() + (2 * 1000);
                 (function frame() {
-                    // launch a few confetti from the left edge
                     confetti({ particleCount: 7, angle: 60, spread: 55, origin: { x: 0 } });
-                    // and launch a few from the right edge
                     confetti({ particleCount: 7, angle: 120, spread: 55, origin: { x: 1 } });
-
-                    // Keep launching until the time is up
-                    if (Date.now() < end) {
-                        requestAnimationFrame(frame);
-                    }
+                    if (Date.now() < end) { requestAnimationFrame(frame); }
                 }());
             }
         }
 
-        function createImageCard(file) { /* ... Baaki code same hai ... */ }
-        function updateImageCard(card, originalFile, compressedFile) { /* ... Baaki code same hai ... */ }
-        function updateImageCardWithError(card, message) { /* ... Baaki code same hai ... */ }
-        
-        // Is function ko time dikhane ke liye update kiya gaya hai
         function updateTotalSavings(original, compressed, duration) {
             if (original === 0) {
-                totalSavingsEl.textContent = '';
-                return;
+                totalSavingsEl.textContent = ''; return;
             }
             const totalSavingPercent = ((original - compressed) / original * 100).toFixed(1);
-            totalSavingsEl.innerHTML = `Total Savings: <span style="color:var(--success-color)">${formatBytes(original - compressed)} (${totalSavingPercent}%)</span> | Took ${duration.toFixed(2)}s`;
+            totalSavingsEl.innerHTML = `Total Savings: <span style="color:var(--success-color)">${formatBytes(original - compressed)} (${totalSavingPercent}%)</span> | Time: ${duration.toFixed(2)}s`;
         }
 
-        async function downloadAllAsZip() { /* ... Baaki code same hai ... */ }
-        function formatBytes(bytes, decimals = 2) { /* ... Baaki code same hai ... */ }
+        // Neeche ke helper functions bilkul same hain.
+        function createImageCard(file) {
+            const card = document.createElement('div');
+            card.className = 'image-card';
+            card.innerHTML = `<img src="${URL.createObjectURL(file)}" alt="${file.name}" class="image-preview"><div class="image-info"><div class="filename">${file.name}</div><div class="size-info">${formatBytes(file.size)}</div></div><div class="loader"></div>`;
+            return card;
+        }
 
-        // NOTE: Niche diye gaye functions ko maine upar waale bade script block mein already daal diya hai,
-        // isliye aapko alag se copy-paste karne ki zaroorat nahi hai. Yeh sirf reference ke liye hai.
-        /*
-        function createImageCard(file) { ... }
-        function updateImageCard(card, originalFile, compressedFile) { ... }
-        function updateImageCardWithError(card, message) { ... }
-        async function downloadAllAsZip() { ... }
-        function formatBytes(bytes, decimals = 2) { ... }
-        */
+        function updateImageCard(card, originalFile, compressedFile) {
+            const savingPercent = ((originalFile.size - compressedFile.size) / originalFile.size * 100).toFixed(1);
+            card.querySelector('.loader').remove();
+            card.querySelector('.size-info').innerHTML = `<span class="original">${formatBytes(originalFile.size)}</span><span class="arrow"> → </span><span class="new">${formatBytes(compressedFile.size)}</span><span class="saving">(${savingPercent}% off)</span>`;
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(compressedFile);
+            downloadLink.download = compressedFile.name;
+            downloadLink.textContent = 'Download';
+            downloadLink.className = 'btn-primary';
+            downloadLink.style.cssText = 'padding: 6px 12px; font-size: 0.9rem;';
+            card.appendChild(downloadLink);
+        }
+
+        function updateImageCardWithError(card, message) {
+            card.querySelector('.loader').remove();
+            const errorSpan = document.createElement('span');
+            errorSpan.textContent = message;
+            errorSpan.style.color = 'var(--error-color)';
+            card.appendChild(errorSpan);
+        }
+        
+        async function downloadAllAsZip() {
+            if (compressedFiles.length === 0) return;
+            const zip = new JSZip();
+            compressedFiles.forEach(item => zip.file(item.name, item.file));
+            downloadAllBtn.textContent = 'Zipping...';
+            downloadAllBtn.disabled = true;
+            const zipBlob = await zip.generateAsync({type:"blob"});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(zipBlob);
+            link.download = 'pro-compressed-images.zip';
+            link.click();
+            downloadAllBtn.textContent = 'Download All as ZIP';
+            downloadAllBtn.disabled = false;
+        }
+
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i];
+        }
 
     </script>
 </body>
