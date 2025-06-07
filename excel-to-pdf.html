@@ -4,197 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Excel to PDF Converter - Pro Tools Hub</title>
-    <meta name="description" content="Convert your Excel spreadsheets (.xlsx, .xls) into PDF documents online for free.">
+    
+    <!-- Library for reading Excel files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Library for creating PDF files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #111827;
-            --card-color: #1f2937;
-            --text-color: #e5e7eb;
-            --text-secondary: #9ca3af;
-            --accent-color: #3b82f6;
+            --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
+            --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
             --border-color: #374151;
-            --input-bg-color: #374151;
-            --button-bg-color: var(--accent-color);
-            --button-text-color: white;
         }
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center;
         }
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            flex-grow: 1;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--text-color);
-        }
-        header p {
-            font-size: 1rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 8px auto 0;
-        }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 24px;
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-        .tool-interface {
-            background-color: var(--card-color);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-        }
-        .tool-interface h2 {
-            margin-top: 0;
-            color: var(--text-color);
-        }
-        .form-group {
-            margin-bottom: 16px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-        .form-group input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            background-color: var(--input-bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            color: var(--text-color);
-            box-sizing: border-box;
-        }
-        .form-group input[type="file"]::file-selector-button {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-        .button {
-            background-color: var(--button-bg-color);
-            color: var(--button-text-color);
-            padding: 12px 20px;
-            border: none;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .button:hover {
-            background-color: #2563eb;
-        }
-        .download-area {
-            margin-top: 24px;
-            padding: 16px;
-            background-color: var(--input-bg-color);
-            border-radius: 6px;
-            text-align: center;
-            display: none; /* Hidden by default */
-        }
-        .download-area a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .download-area a:hover {
-            text-decoration: underline;
-        }
-        footer {
-            text-align: center;
-            margin-top: 48px;
-            padding-bottom: 24px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
+        .container { width: 100%; max-width: 700px; }
+        header { text-align: center; margin-bottom: 32px; }
+        header h1 { font-size: 2.5rem; }
+        header p { font-size: 1.125rem; color: var(--text-secondary); }
+        .card { background-color: var(--card-color); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 24px; }
+        .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; width: 100%; }
+        .btn-primary:hover { background-color: var(--accent-hover); }
+        .drop-zone { border: 2px dashed var(--border-color); border-radius: 12px; padding: 48px 24px; text-align: center; cursor: pointer; transition: background-color 0.2s; }
+        .drop-zone.drag-over { background-color: rgba(59, 130, 246, 0.1); border-color: var(--accent-color); }
+        .status-area { margin-top: 16px; text-align: center; color: var(--text-secondary); }
+        .loader { margin: 16px auto; width: 20px; height: 20px; border: 3px solid var(--border-color); border-top: 3px solid var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-link">← Back to Home</a>
         <header>
-            <h1>Excel to PDF Converter</h1>
-            <p>Convert your Excel files (.xlsx, .xls) to PDF format quickly and securely. Your files are processed in your browser.</p>
+            <h1><a href="index.html" style="text-decoration: none; color: var(--text-secondary);">← Back to Home</a></h1>
+            <h1 style="margin-top:0;">📄 Excel to PDF Converter</h1>
+            <p>Convert your .xlsx files into PDF documents right in your browser.</p>
         </header>
 
-        <main>
-            <div class="tool-interface">
-                <h2>Convert Excel to PDF</h2>
-                <div class="form-group">
-                    <label for="excelFile">Upload Excel File (.xlsx, .xls):</label>
-                    <input type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls">
-                </div>
-                
-                <!-- Placeholder for conversion options, e.g., page orientation, specific sheets -->
-                <div class="form-group">
-                    <label for="pageOrientation">Page Orientation:</label>
-                    <select id="pageOrientation" name="pageOrientation">
-                        <option value="portrait">Portrait</option>
-                        <option value="landscape">Landscape</option>
-                    </select>
-                </div>
-
-                <button type="button" class="button" onclick="alert('Convert to PDF functionality to be implemented! You would use a library like SheetJS (for reading Excel) and jsPDF (for creating PDF).')">Convert to PDF</button>
-
-                <div id="downloadArea" class="download-area">
-                    <p>Your PDF is ready!</p>
-                    <a href="#" id="downloadLink" download="converted_document.pdf">Download PDF</a>
-                </div>
-                 <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 16px;">
-                    Note: For client-side Excel to PDF conversion, you'd typically use libraries like <a href="https://sheetjs.com/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-color)">SheetJS (js-xlsx)</a> to parse the Excel file and <a href="https://parall.ax/products/jspdf" target="_blank" rel="noopener noreferrer" style="color:var(--accent-color)">jsPDF</a> to generate the PDF. This can be complex.
-                </p>
+        <div class="card">
+            <input type="file" id="file-input" accept=".xlsx, .xls" style="display: none;">
+            <div id="drop-zone" class="drop-zone">
+                <p><strong>Drag & drop your Excel file here</strong></p>
+                <p>or</p>
+                <button id="browse-btn" class="btn-primary" style="max-width: 200px;">Browse File</button>
             </div>
-        </main>
+            <div class="status-area">
+                <p id="status-text">Waiting for file...</p>
+                <div id="loader" class="loader"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2024 All rights reserved - Pro Tools Hub</p>
+        </footer>
     </div>
-    
-    <footer>
-        <p>© 2024 All rights reserved - Pro Tools Hub</p>
-    </footer>
+
     <script>
-        // Placeholder for file handling and conversion logic
-        const excelFileInput = document.getElementById('excelFile');
-        if(excelFileInput) {
-            excelFileInput.addEventListener('change', (event) => {
-                const fileName = event.target.files[0] ? event.target.files[0].name : 'No file selected';
-                console.log('Selected file:', fileName);
-                // You would add file processing logic here
-            });
-        }
-        // Example function to show download link (call this after successful conversion)
-        function showDownloadLink(pdfBlobUrl) {
-            const downloadArea = document.getElementById('downloadArea');
-            const downloadLink = document.getElementById('downloadLink');
-            if(downloadArea && downloadLink) {
-                downloadLink.href = pdfBlobUrl;
-                downloadArea.style.display = 'block';
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const browseBtn = document.getElementById('browse-btn');
+        const statusText = document.getElementById('status-text');
+        const loader = document.getElementById('loader');
+
+        // Alias jsPDF to work with jsPDF-AutoTable
+        const { jsPDF } = window.jspdf;
+
+        browseBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+        
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            if (!file || !file.name.match(/\.(xlsx|xls)$/)) {
+                alert("Please select a valid Excel file (.xlsx or .xls)");
+                return;
             }
+
+            statusText.textContent = `Processing "${file.name}"...`;
+            loader.style.display = 'block';
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    const json_data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    createPdf(json_data, file.name.replace(/\.[^/.]+$/, ".pdf"));
+                    
+                    statusText.textContent = 'Conversion successful! Check your downloads.';
+                } catch (error) {
+                    console.error("Error processing file:", error);
+                    statusText.textContent = 'An error occurred during conversion.';
+                    alert('Could not process the Excel file. It might be corrupted or in an unsupported format.');
+                } finally {
+                    loader.style.display = 'none';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function createPdf(data, filename) {
+            const doc = new jsPDF();
+            
+            const head = [data[0]];
+            const body = data.slice(1);
+
+            doc.autoTable({
+                head: head,
+                body: body,
+                startY: 10,
+                theme: 'grid',
+                styles: { fontSize: 8, cellPadding: 2, },
+                headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' }
+            });
+            
+            doc.save(filename);
         }
     </script>
 </body>
