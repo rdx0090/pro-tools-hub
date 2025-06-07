@@ -7,6 +7,8 @@
     
     <!-- Library for creating ZIP files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Library for the celebratory confetti effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +17,7 @@
         :root {
             --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
             --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
-            --border-color: #374151;
+            --border-color: #374151; --success-color: #10b981; --error-color: #ef4444;
         }
         body {
             font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
@@ -34,11 +36,45 @@
         .file-list { list-style: none; padding: 0; margin-top: 16px; max-height: 200px; overflow-y: auto; }
         .file-list li { display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-color); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; }
         .file-list .file-size { color: var(--text-secondary); }
-        #status-area { margin-top: 16px; text-align: center; color: var(--text-secondary); font-weight: 500;}
+        
+        /* New Progress Bar Styles */
+        .progress-bar-container {
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 16px;
+            display: none; /* Hidden by default */
+        }
+        .progress-bar {
+            width: 0%;
+            height: 10px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease-in-out;
+        }
+
+        #status-area { margin-top: 8px; text-align: center; font-weight: 500; min-height: 20px;}
+        .status-success { color: var(--success-color); }
+        .status-error { color: var(--error-color); }
+        
+        /* New Confetti Canvas Style */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            pointer-events: none; /* Allows clicks to go through */
+        }
+
         footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
     </style>
 </head>
 <body>
+    <!-- This canvas is for the confetti! -->
+    <canvas id="confetti-canvas"></canvas>
+
     <div class="container">
         <header>
             <h1>🗂️ File Compressor (ZIP)</h1>
@@ -61,16 +97,20 @@
 
         <div class="card" id="action-card" style="display:none;">
              <button id="compress-btn" class="btn-primary">Create & Download ZIP</button>
+             <div class="progress-bar-container">
+                 <div class="progress-bar"></div>
+             </div>
              <p id="status-area"></p>
         </div>
 
         <footer>
             <p><a href="index.html" style="color: var(--accent-color);">← Back to Hub</a></p>
-            <p>© 2025 All rights reserved - Pro Tools Hub</p>
+            <p>© 2024 All rights reserved - Pro Tools Hub</p>
         </footer>
     </div>
 
     <script>
+        // DOM Elements
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const browseBtn = document.getElementById('browse-btn');
@@ -79,9 +119,18 @@
         const actionCard = document.getElementById('action-card');
         const compressBtn = document.getElementById('compress-btn');
         const statusArea = document.getElementById('status-area');
-
+        const progressBarContainer = document.querySelector('.progress-bar-container');
+        const progressBar = document.querySelector('.progress-bar');
+        
         let filesToZip = [];
+        
+        // Setup Confetti
+        const myConfetti = confetti.create(document.getElementById('confetti-canvas'), {
+            resize: true,
+            useWorker: true
+        });
 
+        // Event Listeners
         browseBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFileSelection(e.target.files));
         
@@ -117,15 +166,20 @@
             
             fileListContainer.style.display = 'block';
             actionCard.style.display = 'block';
-            statusArea.textContent = `Total size: ${formatBytes(totalSize)}`;
+            updateStatus(`Total files: ${filesToZip.length} (${formatBytes(totalSize)})`);
         }
 
         async function createZip() {
             if (filesToZip.length === 0) return;
             
-            statusArea.textContent = 'Zipping files, please wait... This may take a moment for large files.';
+            // --- UI Update on Start ---
+            updateStatus('Starting compression...');
             compressBtn.disabled = true;
             compressBtn.textContent = 'Processing...';
+            progressBarContainer.style.display = 'block';
+            progressBar.style.width = '0%';
+            
+            const startTime = performance.now(); // Start timer
 
             try {
                 const zip = new JSZip();
@@ -136,31 +190,63 @@
                 const zipBlob = await zip.generateAsync({
                     type: "blob",
                     compression: "DEFLATE",
-                    compressionOptions: {
-                        level: 9 // 1 (fastest) to 9 (best compression)
-                    }
-                }, function updateCallback(metadata) {
-                    // Update progress here if needed
-                    statusArea.textContent = `Zipping... ${metadata.percent.toFixed(0)}%`;
+                    compressionOptions: { level: 9 },
+                    streamFiles: true
+                }, (metadata) => {
+                    // --- This function is called during zipping (Progress Update) ---
+                    const percent = metadata.percent.toFixed(0);
+                    progressBar.style.width = `${percent}%`;
+                    updateStatus(`Compressing... ${percent}%`);
                 });
-                
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(zipBlob);
-                link.download = 'pro-tools-hub-files.zip';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
 
-                statusArea.textContent = `Success! ZIP file created (${formatBytes(zipBlob.size)}).`;
+                const endTime = performance.now(); // End timer
+                const duration = ((endTime - startTime) / 1000).toFixed(2); // Calculate seconds
+
+                // --- UI Update on Success ---
+                triggerDownload(zipBlob, 'pro-tools-hub-files.zip');
+                updateStatus(`Success! ZIP created in ${duration}s (${formatBytes(zipBlob.size)}).`, 'success');
+                fireConfetti();
 
             } catch (error) {
                 console.error("Error creating ZIP:", error);
-                statusArea.textContent = 'An error occurred. Please try again.';
-                alert("Could not create ZIP file.");
+                // --- UI Update on Error ---
+                updateStatus('An error occurred. Please try again.', 'error');
             } finally {
+                // --- UI Reset ---
                 compressBtn.disabled = false;
                 compressBtn.textContent = 'Create & Download ZIP';
+                // Hide progress bar after a short delay
+                setTimeout(() => {
+                    progressBarContainer.style.display = 'none';
+                }, 2000);
             }
+        }
+        
+        function triggerDownload(blob, filename) {
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function updateStatus(message, type = '') {
+            statusArea.textContent = message;
+            statusArea.className = ''; // Reset class
+            if (type === 'success') {
+                statusArea.classList.add('status-success');
+            } else if (type === 'error') {
+                statusArea.classList.add('status-error');
+            }
+        }
+
+        function fireConfetti() {
+            myConfetti({
+                particleCount: 150,
+                spread: 90,
+                origin: { y: 0.6 }
+            });
         }
         
         function formatBytes(bytes, decimals = 2) {
