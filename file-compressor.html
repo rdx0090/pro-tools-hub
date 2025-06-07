@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Compressor (ZIP) - Pro Tools Hub</title>
+    
+    <!-- Library for creating ZIP files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
+            --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
+            --border-color: #374151;
+        }
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center;
+        }
+        .container { width: 100%; max-width: 700px; }
+        header { text-align: center; margin-bottom: 32px; }
+        header h1 { font-size: 2.5rem; }
+        header p { font-size: 1.125rem; color: var(--text-secondary); }
+        .card { background-color: var(--card-color); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 24px; }
+        .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; width: 100%; }
+        .btn-primary:hover { background-color: var(--accent-hover); }
+        .btn-primary:disabled { background-color: #374151; cursor: not-allowed; }
+        .drop-zone { border: 2px dashed var(--border-color); border-radius: 12px; padding: 48px 24px; text-align: center; cursor: pointer; transition: background-color 0.2s; }
+        .drop-zone.drag-over { background-color: rgba(59, 130, 246, 0.1); border-color: var(--accent-color); }
+        .file-list { list-style: none; padding: 0; margin-top: 16px; max-height: 200px; overflow-y: auto; }
+        .file-list li { display: flex; justify-content: space-between; align-items: center; background-color: var(--bg-color); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; }
+        .file-list .file-size { color: var(--text-secondary); }
+        #status-area { margin-top: 16px; text-align: center; color: var(--text-secondary); font-weight: 500;}
+        footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗂️ File Compressor (ZIP)</h1>
+            <p>Select multiple files of any type to combine them into a single ZIP archive.</p>
+        </header>
+
+        <div class="card">
+            <input type="file" id="file-input" multiple style="display: none;">
+            <div id="drop-zone" class="drop-zone">
+                <p><strong>Drag & drop your files here</strong></p>
+                <p>or</p>
+                <button id="browse-btn" class="btn-primary" style="max-width: 200px;">Browse Files</button>
+            </div>
+            
+            <div id="file-list-container" style="display: none;">
+                <h3 style="margin-top: 24px; margin-bottom: 8px;">Selected Files:</h3>
+                <ul id="file-list" class="file-list"></ul>
+            </div>
+        </div>
+
+        <div class="card" id="action-card" style="display:none;">
+             <button id="compress-btn" class="btn-primary">Create & Download ZIP</button>
+             <p id="status-area"></p>
+        </div>
+
+        <footer>
+            <p><a href="index.html" style="color: var(--accent-color);">← Back to Hub</a></p>
+            <p>© 2025 All rights reserved - Pro Tools Hub</p>
+        </footer>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const browseBtn = document.getElementById('browse-btn');
+        const fileListContainer = document.getElementById('file-list-container');
+        const fileListUl = document.getElementById('file-list');
+        const actionCard = document.getElementById('action-card');
+        const compressBtn = document.getElementById('compress-btn');
+        const statusArea = document.getElementById('status-area');
+
+        let filesToZip = [];
+
+        browseBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFileSelection(e.target.files));
+        
+        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            handleFileSelection(e.dataTransfer.files);
+        });
+        
+        compressBtn.addEventListener('click', createZip);
+
+        function handleFileSelection(files) {
+            filesToZip = Array.from(files);
+            if (filesToZip.length === 0) {
+                fileListContainer.style.display = 'none';
+                actionCard.style.display = 'none';
+                return;
+            }
+            
+            fileListUl.innerHTML = '';
+            let totalSize = 0;
+            filesToZip.forEach(file => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-size">${formatBytes(file.size)}</span>
+                `;
+                fileListUl.appendChild(li);
+                totalSize += file.size;
+            });
+            
+            fileListContainer.style.display = 'block';
+            actionCard.style.display = 'block';
+            statusArea.textContent = `Total size: ${formatBytes(totalSize)}`;
+        }
+
+        async function createZip() {
+            if (filesToZip.length === 0) return;
+            
+            statusArea.textContent = 'Zipping files, please wait... This may take a moment for large files.';
+            compressBtn.disabled = true;
+            compressBtn.textContent = 'Processing...';
+
+            try {
+                const zip = new JSZip();
+                filesToZip.forEach(file => {
+                    zip.file(file.name, file);
+                });
+                
+                const zipBlob = await zip.generateAsync({
+                    type: "blob",
+                    compression: "DEFLATE",
+                    compressionOptions: {
+                        level: 9 // 1 (fastest) to 9 (best compression)
+                    }
+                }, function updateCallback(metadata) {
+                    // Update progress here if needed
+                    statusArea.textContent = `Zipping... ${metadata.percent.toFixed(0)}%`;
+                });
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(zipBlob);
+                link.download = 'pro-tools-hub-files.zip';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                statusArea.textContent = `Success! ZIP file created (${formatBytes(zipBlob.size)}).`;
+
+            } catch (error) {
+                console.error("Error creating ZIP:", error);
+                statusArea.textContent = 'An error occurred. Please try again.';
+                alert("Could not create ZIP file.");
+            } finally {
+                compressBtn.disabled = false;
+                compressBtn.textContent = 'Create & Download ZIP';
+            }
+        }
+        
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+    </script>
+</body>
+</html>
