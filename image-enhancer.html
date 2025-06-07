@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Enhancer - Pro Tools Hub</title>
     
-    <!-- Nayi aur behtar library -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/style.css" />
-    <!-- Fireworks ke liye library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,86 +16,73 @@
         :root {
             --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
             --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
-            --border-color: #374151;
+            --border-color: #374151; --success-color: #10b981;
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 1024px; } /* Thoda bada container */
+        .container { width: 100%; max-width: 1024px; }
         header { text-align: center; margin-bottom: 32px; }
         header h1 { font-size: 2.5rem; }
         header p { font-size: 1.125rem; color: var(--text-secondary); }
         .card { background-color: var(--card-color); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 24px; }
         .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
         .btn-primary:hover { background-color: var(--accent-hover); }
-        .btn-secondary { background-color: #4b5563; color: white; width: 100%; margin-top: 16px; }
+        .btn-secondary { background-color: #4b5563; }
         
-        .workspace { display: none; grid-template-columns: 3fr 1fr; gap: 24px; align-items: flex-start; }
-        
-        /* Slider ke liye custom styles */
-        .comparison-slider-container {
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            width: 100%;
-        }
-        img-comparison-slider {
-            width: 100%;
-            --divider-width: 3px;
-            --divider-color: var(--accent-color);
-            --default-handle-opacity: 0.8;
-            --handle-size: 50px;
-        }
-        img-comparison-slider img {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-        }
+        .workspace { display: grid; grid-template-columns: 3fr 1fr; gap: 24px; align-items: flex-start; }
+        #preview-container { text-align: center; }
+        #preview-image { max-width: 100%; max-height: 500px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .comparison-slider-container { display: none; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; width: 100%; }
+        img-comparison-slider { width: 100%; --divider-width: 3px; --divider-color: var(--accent-color); }
+        img-comparison-slider img { width: 100%; height: auto; object-fit: contain; }
 
         .controls .form-group { margin-bottom: 16px; }
         .controls label { display: block; margin-bottom: 8px; color: var(--text-secondary); }
         .controls input[type="range"] { width: 100%; }
-        .loader-container { display: none; text-align: center; }
+        .processing-feedback { text-align: center; margin-top: 16px; color: var(--success-color); font-weight: 600; font-size: 1.1rem; display: none; }
+        .loader-container { display: none; text-align: center; padding: 20px 0; }
         .loader { margin: 8px auto; width: 20px; height: 20px; border: 3px solid var(--border-color); border-top: 3px solid var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
         
-        /* Mobile ke liye responsive design */
-        @media (max-width: 768px) {
-            .workspace { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 768px) { .workspace { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>✨ Image Enhancer</h1>
-            <p>Adjust filters and see the magic with the Before/After slider.</p>
+            <p>Adjust filters, click Enhance, and see the magic happen!</p>
         </header>
 
-        <div class="card">
+        <div class="card" id="upload-card">
             <input type="file" id="file-input" accept="image/*" style="display: none;">
             <button id="upload-btn" class="btn-primary">Upload Image</button>
-            <div id="loader-container" class="loader-container">
-                <div class="loader"></div>
-                <p>Loading your image...</p>
-            </div>
         </div>
 
-        <div id="workspace" class="workspace">
-            <div class="comparison-slider-container">
-                <!-- Slider yahan JS se add hoga -->
+        <div id="workspace" class="workspace" style="display: none;">
+            <!-- Step 2 and 4: Image Preview and Comparison -->
+            <div id="image-area">
+                <div id="preview-container">
+                    <img id="preview-image" src="" alt="Your uploaded image">
+                </div>
+                <div class="comparison-slider-container">
+                    <!-- Slider yahan JS se add hoga -->
+                </div>
             </div>
             
+            <!-- Step 3: Controls -->
             <div class="controls card">
                 <h3>Filters</h3>
-                <!-- Sliders -->
                 <div class="form-group"><label for="brightness">Brightness (<span id="brightness-value">100</span>%)</label><input type="range" id="brightness" min="0" max="200" value="100"></div>
                 <div class="form-group"><label for="contrast">Contrast (<span id="contrast-value">100</span>%)</label><input type="range" id="contrast" min="0" max="200" value="100"></div>
                 <div class="form-group"><label for="saturate">Saturation (<span id="saturate-value">100</span>%)</label><input type="range" id="saturate" min="0" max="200" value="100"></div>
                 <div class="form-group"><label for="grayscale">Grayscale (<span id="grayscale-value">0</span>%)</label><input type="range" id="grayscale" min="0" max="100" value="0"></div>
                 <div class="form-group"><label for="sepia">Sepia (<span id="sepia-value">0</span>%)</label><input type="range" id="sepia" min="0" max="100" value="0"></div>
-                <!-- Buttons -->
-                <button id="reset-btn" class="btn-primary btn-secondary">Reset Filters</button>
-                <button id="download-btn" class="btn-primary" style="margin-top: 16px;">Download Enhanced Image</button>
+                
+                <button id="enhance-btn" class="btn-primary" style="width:100%; margin-top: 16px;">✨ Enhance Image</button>
+                <div id="loader-container" class="loader-container"><div class="loader"></div><p>Processing...</p></div>
+                <p class="processing-feedback" id="feedback-text"></p>
+                <button id="download-btn" class="btn-primary btn-secondary" style="display:none;">Download Image</button>
             </div>
         </div>
 
@@ -107,112 +92,114 @@
         </footer>
     </div>
     
-    <!-- Processing ke liye invisible canvas -->
     <canvas id="processing-canvas" style="display:none;"></canvas>
 
     <script>
         // DOM Elements
-        const fileInput = document.getElementById('file-input');
         const uploadBtn = document.getElementById('upload-btn');
-        const loaderContainer = document.getElementById('loader-container');
+        const fileInput = document.getElementById('file-input');
         const workspace = document.getElementById('workspace');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
         const sliderContainer = document.querySelector('.comparison-slider-container');
+        const enhanceBtn = document.getElementById('enhance-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const loaderContainer = document.getElementById('loader-container');
+        const feedbackText = document.getElementById('feedback-text');
         const processingCanvas = document.getElementById('processing-canvas');
         const ctx = processingCanvas.getContext('2d');
-        const downloadBtn = document.getElementById('download-btn');
-        const resetBtn = document.getElementById('reset-btn');
 
-        const filters = {
-            brightness: document.getElementById('brightness'), contrast: document.getElementById('contrast'),
-            saturate: document.getElementById('saturate'), grayscale: document.getElementById('grayscale'),
-            sepia: document.getElementById('sepia'),
-        };
+        const filterInputs = document.querySelectorAll('.controls input[type="range"]');
 
         let originalImage = null;
-        let originalFileName = 'enhanced-image.png';
+        let originalFileName = 'enhanced.png';
 
         // Event Listeners
         uploadBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', handleImageUpload);
-        Object.values(filters).forEach(input => input.addEventListener('input', applyFilters));
-        resetBtn.addEventListener('click', resetFilters);
-        downloadBtn.addEventListener('click', downloadImage);
+        enhanceBtn.addEventListener('click', processAndShowComparison);
+        downloadBtn.addEventListener('click', () => {
+             const link = document.createElement('a');
+             link.download = originalFileName;
+             link.href = processingCanvas.toDataURL('image/png');
+             link.click();
+        });
+        filterInputs.forEach(input => input.addEventListener('input', updateLabels));
 
-        // Functions
+
+        // Main Functions
         function handleImageUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
 
-            uploadBtn.style.display = 'none';
-            loaderContainer.style.display = 'block';
+            document.getElementById('upload-card').style.display = 'none';
+            workspace.style.display = 'grid';
             originalFileName = file.name.replace(/\.[^/.]+$/, "") + "-enhanced.png";
 
             const reader = new FileReader();
             reader.onload = (event) => {
                 originalImage = new Image();
                 originalImage.onload = () => {
-                    workspace.style.display = 'grid';
-                    uploadBtn.style.display = 'block';
-                    loaderContainer.style.display = 'none';
-                    setupComparisonSlider(originalImage.src);
-                    resetFilters();
+                    previewImage.src = originalImage.src;
                 };
                 originalImage.src = event.target.result;
             };
             reader.readAsDataURL(file);
         }
-
-        function setupComparisonSlider(originalSrc) {
-            // Slider ka HTML banayein
-            sliderContainer.innerHTML = `
-                <img-comparison-slider>
-                    <img slot="first" src="${originalSrc}" id="before-image">
-                    <img slot="second" src="${originalSrc}" id="after-image">
-                </img-comparison-slider>
-            `;
-        }
         
-        function applyFilters() {
-            if (!originalImage) return;
-
-            // Update labels
-            document.getElementById('brightness-value').textContent = filters.brightness.value;
-            document.getElementById('contrast-value').textContent = filters.contrast.value;
-            document.getElementById('saturate-value').textContent = filters.saturate.value;
-            document.getElementById('grayscale-value').textContent = filters.grayscale.value;
-            document.getElementById('sepia-value').textContent = filters.sepia.value;
-
-            const filterString = `brightness(${filters.brightness.value}%) contrast(${filters.contrast.value}%) saturate(${filters.saturate.value}%) grayscale(${filters.grayscale.value}%) sepia(${filters.sepia.value}%)`;
-
-            processingCanvas.width = originalImage.width;
-            processingCanvas.height = originalImage.height;
-            ctx.filter = filterString;
-            ctx.drawImage(originalImage, 0, 0);
-
-            // Sirf "after" image ko update karein
-            const newDataUrl = processingCanvas.toDataURL('image/png');
-            document.getElementById('after-image').src = newDataUrl;
-        }
-
-        function resetFilters() {
-            Object.values(filters).forEach(input => {
-                input.value = (input.id === 'brightness' || input.id === 'contrast' || input.id === 'saturate') ? 100 : 0;
+        function updateLabels() {
+            filterInputs.forEach(input => {
+                document.getElementById(`${input.id}-value`).textContent = input.value;
             });
-            // Filters ko apply karein taaki "after" image original jaisi ho jaaye
-            applyFilters();
         }
-        
-        function downloadImage() {
-            if (!originalImage) return;
-            
-            // Fireworks!
-            confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
 
-            // Download trigger
-            const link = document.createElement('a');
-            link.download = originalFileName;
-            link.href = processingCanvas.toDataURL('image/png');
-            link.click();
+        function processAndShowComparison() {
+            if (!originalImage) return;
+
+            // Show loader, hide buttons
+            enhanceBtn.style.display = 'none';
+            downloadBtn.style.display = 'none';
+            feedbackText.style.display = 'none';
+            loaderContainer.style.display = 'block';
+
+            const startTime = performance.now();
+
+            // Simulate a short processing time
+            setTimeout(() => {
+                const filterString = Array.from(filterInputs).map(input => {
+                    return `${input.id}(${input.value}%)`;
+                }).join(' ');
+
+                processingCanvas.width = originalImage.width;
+                processingCanvas.height = originalImage.height;
+                ctx.filter = filterString;
+                ctx.drawImage(originalImage, 0, 0);
+                const enhancedSrc = processingCanvas.toDataURL('image/png');
+                
+                // Hide loader
+                loaderContainer.style.display = 'none';
+
+                // Celebration!
+                confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+                const endTime = performance.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(1);
+                feedbackText.textContent = `Enhanced in ${duration}s!`;
+                feedbackText.style.display = 'block';
+
+                // Show slider and download button
+                previewContainer.style.display = 'none';
+                sliderContainer.style.display = 'block';
+                sliderContainer.innerHTML = `
+                    <img-comparison-slider>
+                        <img slot="first" src="${originalImage.src}">
+                        <img slot="second" src="${enhancedSrc}">
+                    </img-comparison-slider>
+                `;
+                downloadBtn.style.display = 'block';
+                enhanceBtn.textContent = '✨ Enhance Again';
+                enhanceBtn.style.display = 'block';
+
+            }, 500); // 0.5 second delay to make it feel like it's working
         }
     </script>
 </body>
