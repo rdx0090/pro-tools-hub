@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Enhancer - Pro Tools Hub</title>
     
-    <!-- External Libraries - Zaroori hain -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.event.move/2.0.1/jquery.event.move.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twentytwenty/0.9.0/jquery.twentytwenty.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twentytwenty/0.9.0/css/twentytwenty.min.css" />
+    <!-- Nayi aur behtar library -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/style.css" />
+    <!-- Fireworks ke liye library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,7 +21,7 @@
             --border-color: #374151;
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center; }
-        .container { width: 100%; max-width: 900px; }
+        .container { width: 100%; max-width: 1024px; } /* Thoda bada container */
         header { text-align: center; margin-bottom: 32px; }
         header h1 { font-size: 2.5rem; }
         header p { font-size: 1.125rem; color: var(--text-secondary); }
@@ -30,9 +29,29 @@
         .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
         .btn-primary:hover { background-color: var(--accent-hover); }
         .btn-secondary { background-color: #4b5563; color: white; width: 100%; margin-top: 16px; }
-        .workspace { display: none; grid-template-columns: 2fr 1fr; gap: 24px; }
-        .twentytwenty-container { box-sizing: content-box !important; } /* Fix for library */
-        .twentytwenty-container img { max-width: 100%; display: block; }
+        
+        .workspace { display: none; grid-template-columns: 3fr 1fr; gap: 24px; align-items: flex-start; }
+        
+        /* Slider ke liye custom styles */
+        .comparison-slider-container {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            width: 100%;
+        }
+        img-comparison-slider {
+            width: 100%;
+            --divider-width: 3px;
+            --divider-color: var(--accent-color);
+            --default-handle-opacity: 0.8;
+            --handle-size: 50px;
+        }
+        img-comparison-slider img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
         .controls .form-group { margin-bottom: 16px; }
         .controls label { display: block; margin-bottom: 8px; color: var(--text-secondary); }
         .controls input[type="range"] { width: 100%; }
@@ -40,14 +59,18 @@
         .loader { margin: 8px auto; width: 20px; height: 20px; border: 3px solid var(--border-color); border-top: 3px solid var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
-        @media (max-width: 768px) { .workspace { grid-template-columns: 1fr; } }
+        
+        /* Mobile ke liye responsive design */
+        @media (max-width: 768px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>✨ Image Enhancer</h1>
-            <p>Adjust filters and see the result with the Before/After slider.</p>
+            <p>Adjust filters and see the magic with the Before/After slider.</p>
         </header>
 
         <div class="card">
@@ -60,37 +83,21 @@
         </div>
 
         <div id="workspace" class="workspace">
-            <!-- Before/After Slider ke liye naya HTML structure -->
-            <div id="comparison-container">
-                <!-- Iske andar JS se images add hongi -->
+            <div class="comparison-slider-container">
+                <!-- Slider yahan JS se add hoga -->
             </div>
             
             <div class="controls card">
                 <h3>Filters</h3>
-                <!-- Sliders for filters -->
-                <div class="form-group">
-                    <label for="brightness">Brightness (<span id="brightness-value">100</span>%)</label>
-                    <input type="range" id="brightness" min="0" max="200" value="100">
-                </div>
-                <div class="form-group">
-                    <label for="contrast">Contrast (<span id="contrast-value">100</span>%)</label>
-                    <input type="range" id="contrast" min="0" max="200" value="100">
-                </div>
-                <div class="form-group">
-                    <label for="saturate">Saturation (<span id="saturate-value">100</span>%)</label>
-                    <input type="range" id="saturate" min="0" max="200" value="100">
-                </div>
-                <div class="form-group">
-                    <label for="grayscale">Grayscale (<span id="grayscale-value">0</span>%)</label>
-                    <input type="range" id="grayscale" min="0" max="100" value="0">
-                </div>
-                <div class="form-group">
-                    <label for="sepia">Sepia (<span id="sepia-value">0</span>%)</label>
-                    <input type="range" id="sepia" min="0" max="100" value="0">
-                </div>
-                <!-- Action Buttons -->
+                <!-- Sliders -->
+                <div class="form-group"><label for="brightness">Brightness (<span id="brightness-value">100</span>%)</label><input type="range" id="brightness" min="0" max="200" value="100"></div>
+                <div class="form-group"><label for="contrast">Contrast (<span id="contrast-value">100</span>%)</label><input type="range" id="contrast" min="0" max="200" value="100"></div>
+                <div class="form-group"><label for="saturate">Saturation (<span id="saturate-value">100</span>%)</label><input type="range" id="saturate" min="0" max="200" value="100"></div>
+                <div class="form-group"><label for="grayscale">Grayscale (<span id="grayscale-value">0</span>%)</label><input type="range" id="grayscale" min="0" max="100" value="0"></div>
+                <div class="form-group"><label for="sepia">Sepia (<span id="sepia-value">0</span>%)</label><input type="range" id="sepia" min="0" max="100" value="0"></div>
+                <!-- Buttons -->
                 <button id="reset-btn" class="btn-primary btn-secondary">Reset Filters</button>
-                <button id="download-btn" class="btn-primary" style="margin-top: 16px;">Download Image</button>
+                <button id="download-btn" class="btn-primary" style="margin-top: 16px;">Download Enhanced Image</button>
             </div>
         </div>
 
@@ -99,8 +106,8 @@
             <p>© 2024 All rights reserved - Pro Tools Hub</p>
         </footer>
     </div>
-
-    <!-- Ek alag canvas jo sirf processing ke liye use hoga (dikhayi nahi dega) -->
+    
+    <!-- Processing ke liye invisible canvas -->
     <canvas id="processing-canvas" style="display:none;"></canvas>
 
     <script>
@@ -109,16 +116,16 @@
         const uploadBtn = document.getElementById('upload-btn');
         const loaderContainer = document.getElementById('loader-container');
         const workspace = document.getElementById('workspace');
-        const comparisonContainer = document.getElementById('comparison-container');
+        const sliderContainer = document.querySelector('.comparison-slider-container');
         const processingCanvas = document.getElementById('processing-canvas');
         const ctx = processingCanvas.getContext('2d');
         const downloadBtn = document.getElementById('download-btn');
         const resetBtn = document.getElementById('reset-btn');
 
         const filters = {
-            brightness: $('#brightness'), contrast: $('#contrast'),
-            saturate: $('#saturate'), grayscale: $('#grayscale'),
-            sepia: $('#sepia'),
+            brightness: document.getElementById('brightness'), contrast: document.getElementById('contrast'),
+            saturate: document.getElementById('saturate'), grayscale: document.getElementById('grayscale'),
+            sepia: document.getElementById('sepia'),
         };
 
         let originalImage = null;
@@ -127,7 +134,7 @@
         // Event Listeners
         uploadBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', handleImageUpload);
-        Object.values(filters).forEach(input => input.on('input', applyFilters));
+        Object.values(filters).forEach(input => input.addEventListener('input', applyFilters));
         resetBtn.addEventListener('click', resetFilters);
         downloadBtn.addEventListener('click', downloadImage);
 
@@ -156,53 +163,52 @@
         }
 
         function setupComparisonSlider(originalSrc) {
-            // Slider ko initialize karein
-            comparisonContainer.innerHTML = `<img src="${originalSrc}" id="before-image" /><img src="${originalSrc}" id="after-image" />`;
-            $('#comparison-container').twentytwenty({
-                default_offset_pct: 0.5,
-                no_overlay: true,
-            });
+            // Slider ka HTML banayein
+            sliderContainer.innerHTML = `
+                <img-comparison-slider>
+                    <img slot="first" src="${originalSrc}" id="before-image">
+                    <img slot="second" src="${originalSrc}" id="after-image">
+                </img-comparison-slider>
+            `;
         }
         
         function applyFilters() {
             if (!originalImage) return;
 
             // Update labels
-            $('#brightness-value').text(filters.brightness.val());
-            $('#contrast-value').text(filters.contrast.val());
-            $('#saturate-value').text(filters.saturate.val());
-            $('#grayscale-value').text(filters.grayscale.val());
-            $('#sepia-value').text(filters.sepia.val());
+            document.getElementById('brightness-value').textContent = filters.brightness.value;
+            document.getElementById('contrast-value').textContent = filters.contrast.value;
+            document.getElementById('saturate-value').textContent = filters.saturate.value;
+            document.getElementById('grayscale-value').textContent = filters.grayscale.value;
+            document.getElementById('sepia-value').textContent = filters.sepia.value;
 
-            const filterString = `brightness(${filters.brightness.val()}%) contrast(${filters.contrast.val()}%) saturate(${filters.saturate.val()}%) grayscale(${filters.grayscale.val()}%) sepia(${filters.sepia.val()}%)`;
+            const filterString = `brightness(${filters.brightness.value}%) contrast(${filters.contrast.value}%) saturate(${filters.saturate.value}%) grayscale(${filters.grayscale.value}%) sepia(${filters.sepia.value}%)`;
 
             processingCanvas.width = originalImage.width;
             processingCanvas.height = originalImage.height;
             ctx.filter = filterString;
             ctx.drawImage(originalImage, 0, 0);
 
-            // "After" image ko update karein
+            // Sirf "after" image ko update karein
             const newDataUrl = processingCanvas.toDataURL('image/png');
-            $('#after-image').attr('src', newDataUrl);
+            document.getElementById('after-image').src = newDataUrl;
         }
 
         function resetFilters() {
             Object.values(filters).forEach(input => {
-                input.val(input.attr('id') === 'brightness' || input.attr('id') === 'contrast' || input.attr('id') === 'saturate' ? 100 : 0).trigger('input');
+                input.value = (input.id === 'brightness' || input.id === 'contrast' || input.id === 'saturate') ? 100 : 0;
             });
+            // Filters ko apply karein taaki "after" image original jaisi ho jaaye
+            applyFilters();
         }
         
         function downloadImage() {
             if (!originalImage) return;
             
-            // Launch fireworks!
-            confetti({
-                particleCount: 150,
-                spread: 90,
-                origin: { y: 0.6 }
-            });
+            // Fireworks!
+            confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
 
-            // Trigger download
+            // Download trigger
             const link = document.createElement('a');
             link.download = originalFileName;
             link.href = processingCanvas.toDataURL('image/png');
