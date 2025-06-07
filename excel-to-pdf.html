@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel to PDF Converter - Pro Tools Hub</title>
+    <meta name="description" content="Convert your Excel spreadsheets (.xlsx, .xls) into PDF documents online for free.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #111827;
+            --card-color: #1f2937;
+            --text-color: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --accent-color: #3b82f6;
+            --border-color: #374151;
+            --input-bg-color: #374151;
+            --button-bg-color: var(--accent-color);
+            --button-text-color: white;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            flex-grow: 1;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        header p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 8px auto 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .tool-interface {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        .tool-interface h2 {
+            margin-top: 0;
+            color: var(--text-color);
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--input-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
+        .form-group input[type="file"]::file-selector-button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .button {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
+            background-color: #2563eb;
+        }
+        .download-area {
+            margin-top: 24px;
+            padding: 16px;
+            background-color: var(--input-bg-color);
+            border-radius: 6px;
+            text-align: center;
+            display: none; /* Hidden by default */
+        }
+        .download-area a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .download-area a:hover {
+            text-decoration: underline;
+        }
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            padding-bottom: 24px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <header>
+            <h1>Excel to PDF Converter</h1>
+            <p>Convert your Excel files (.xlsx, .xls) to PDF format quickly and securely. Your files are processed in your browser.</p>
+        </header>
+
+        <main>
+            <div class="tool-interface">
+                <h2>Convert Excel to PDF</h2>
+                <div class="form-group">
+                    <label for="excelFile">Upload Excel File (.xlsx, .xls):</label>
+                    <input type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls">
+                </div>
+                
+                <!-- Placeholder for conversion options, e.g., page orientation, specific sheets -->
+                <div class="form-group">
+                    <label for="pageOrientation">Page Orientation:</label>
+                    <select id="pageOrientation" name="pageOrientation">
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                </div>
+
+                <button type="button" class="button" onclick="alert('Convert to PDF functionality to be implemented! You would use a library like SheetJS (for reading Excel) and jsPDF (for creating PDF).')">Convert to PDF</button>
+
+                <div id="downloadArea" class="download-area">
+                    <p>Your PDF is ready!</p>
+                    <a href="#" id="downloadLink" download="converted_document.pdf">Download PDF</a>
+                </div>
+                 <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 16px;">
+                    Note: For client-side Excel to PDF conversion, you'd typically use libraries like <a href="https://sheetjs.com/" target="_blank" rel="noopener noreferrer" style="color:var(--accent-color)">SheetJS (js-xlsx)</a> to parse the Excel file and <a href="https://parall.ax/products/jspdf" target="_blank" rel="noopener noreferrer" style="color:var(--accent-color)">jsPDF</a> to generate the PDF. This can be complex.
+                </p>
+            </div>
+        </main>
+    </div>
+    
+    <footer>
+        <p>© 2024 All rights reserved - Pro Tools Hub</p>
+    </footer>
+    <script>
+        // Placeholder for file handling and conversion logic
+        const excelFileInput = document.getElementById('excelFile');
+        if(excelFileInput) {
+            excelFileInput.addEventListener('change', (event) => {
+                const fileName = event.target.files[0] ? event.target.files[0].name : 'No file selected';
+                console.log('Selected file:', fileName);
+                // You would add file processing logic here
+            });
+        }
+        // Example function to show download link (call this after successful conversion)
+        function showDownloadLink(pdfBlobUrl) {
+            const downloadArea = document.getElementById('downloadArea');
+            const downloadLink = document.getElementById('downloadLink');
+            if(downloadArea && downloadLink) {
+                downloadLink.href = pdfBlobUrl;
+                downloadArea.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

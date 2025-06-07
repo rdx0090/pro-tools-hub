@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Enhancer - Pro Tools Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
+            --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
+            --border-color: #374151;
+        }
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center;
+        }
+        .container { width: 100%; max-width: 900px; }
+        header { text-align: center; margin-bottom: 32px; }
+        header h1 { font-size: 2.5rem; }
+        header p { font-size: 1.125rem; color: var(--text-secondary); }
+        .card { background-color: var(--card-color); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 24px; }
+        .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
+        .btn-primary:hover { background-color: var(--accent-hover); }
+        .image-workspace { display: none; grid-template-columns: 2fr 1fr; gap: 24px; }
+        #canvas-container { border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+        #preview-canvas { max-width: 100%; display: block; }
+        .controls .form-group { margin-bottom: 16px; }
+        .controls label { display: block; margin-bottom: 8px; color: var(--text-secondary); }
+        .controls input[type="range"] { width: 100%; -webkit-appearance: none; appearance: none; height: 8px; background: var(--border-color); border-radius: 5px; outline: none; }
+        .controls input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--accent-color); border-radius: 50%; cursor: pointer; }
+        footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
+        @media (max-width: 768px) { .image-workspace { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✨ Image Enhancer</h1>
+            <p>Adjust brightness, contrast, saturation, and other filters in real-time.</p>
+        </header>
+        
+        <div class="card">
+            <input type="file" id="file-input" accept="image/*" style="display: none;">
+            <button id="upload-btn" class="btn-primary">Upload Image</button>
+        </div>
+        
+        <div id="workspace" class="image-workspace">
+            <div id="canvas-container">
+                <canvas id="preview-canvas"></canvas>
+            </div>
+            <div class="controls card">
+                <h3>Filters</h3>
+                <div class="form-group">
+                    <label for="brightness">Brightness (<span id="brightness-value">100</span>%)</label>
+                    <input type="range" id="brightness" min="0" max="200" value="100">
+                </div>
+                <div class="form-group">
+                    <label for="contrast">Contrast (<span id="contrast-value">100</span>%)</label>
+                    <input type="range" id="contrast" min="0" max="200" value="100">
+                </div>
+                <div class="form-group">
+                    <label for="saturate">Saturation (<span id="saturate-value">100</span>%)</label>
+                    <input type="range" id="saturate" min="0" max="200" value="100">
+                </div>
+                 <div class="form-group">
+                    <label for="grayscale">Grayscale (<span id="grayscale-value">0</span>%)</label>
+                    <input type="range" id="grayscale" min="0" max="100" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="sepia">Sepia (<span id="sepia-value">0</span>%)</label>
+                    <input type="range" id="sepia" min="0" max="100" value="0">
+                </div>
+                <button id="reset-btn" class="btn-primary" style="background-color: #4b5563; width: 100%; margin-top: 16px;">Reset Filters</button>
+                <button id="download-btn" class="btn-primary" style="width: 100%; margin-top: 16px;">Download Image</button>
+            </div>
+        </div>
+
+        <footer>
+            <p><a href="index.html" style="color: var(--accent-color);">← Back to Hub</a></p>
+            <p>© 2024 All rights reserved - Pro Tools Hub</p>
+        </footer>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const uploadBtn = document.getElementById('upload-btn');
+        const workspace = document.getElementById('workspace');
+        const canvas = document.getElementById('preview-canvas');
+        const ctx = canvas.getContext('2d');
+        const downloadBtn = document.getElementById('download-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        const filters = {
+            brightness: document.getElementById('brightness'),
+            contrast: document.getElementById('contrast'),
+            saturate: document.getElementById('saturate'),
+            grayscale: document.getElementById('grayscale'),
+            sepia: document.getElementById('sepia'),
+        };
+
+        let originalImage = null;
+        let originalFileName = 'enhanced-image.png';
+
+        uploadBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleImageUpload);
+        
+        // *** IMPORTANT CHANGE IS HERE ***
+        // Add event listener to each slider to apply filters on 'input' (real-time)
+        Object.values(filters).forEach(input => {
+            input.addEventListener('input', applyFilters);
+        });
+        
+        resetBtn.addEventListener('click', resetFilters);
+        downloadBtn.addEventListener('click', downloadImage);
+
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            originalFileName = file.name.replace(/\.[^/.]+$/, "") + "-enhanced.png";
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                originalImage = new Image();
+                originalImage.onload = () => {
+                    workspace.style.display = 'grid';
+                    resetFilters();
+                };
+                originalImage.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function applyFilters() {
+            if (!originalImage) return;
+            
+            // Update value labels in real-time
+            document.getElementById('brightness-value').textContent = filters.brightness.value;
+            document.getElementById('contrast-value').textContent = filters.contrast.value;
+            document.getElementById('saturate-value').textContent = filters.saturate.value;
+            document.getElementById('grayscale-value').textContent = filters.grayscale.value;
+            document.getElementById('sepia-value').textContent = filters.sepia.value;
+            
+            // Construct the CSS filter string
+            const filterString = `
+                brightness(${filters.brightness.value}%)
+                contrast(${filters.contrast.value}%)
+                saturate(${filters.saturate.value}%)
+                grayscale(${filters.grayscale.value}%)
+                sepia(${filters.sepia.value}%)
+            `;
+            
+            canvas.width = originalImage.width;
+            canvas.height = originalImage.height;
+            
+            // Apply the filter string to the canvas context
+            ctx.filter = filterString;
+            // Redraw the image with the new filters
+            ctx.drawImage(originalImage, 0, 0);
+        }
+
+        function resetFilters() {
+            // Set all sliders back to their default values
+            filters.brightness.value = 100;
+            filters.contrast.value = 100;
+            filters.saturate.value = 100;
+            filters.grayscale.value = 0;
+            filters.sepia.value = 0;
+            // Apply the default filters to show the original image
+            applyFilters();
+        }
+
+        function downloadImage() {
+            if (!originalImage) return;
+            const link = document.createElement('a');
+            link.download = originalFileName;
+            // Get the image data from the canvas
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>
