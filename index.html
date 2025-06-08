@@ -1,38 +1,150 @@
-<!-- Is page ka head, style, aur footer 'about.html' jaisa hi hoga -->
-<!-- Aap 'about.html' ka poora code copy karke bas <div class="content-card"> ke andar ka content badal sakte hain -->
-
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-    <title>Privacy Policy - Pro Tools Hub</title>
-    <!-- Baaki saara head content 'about.html' se copy karein -->
-    <style> /* Baaki saara style content 'about.html' se copy karein */ </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Tools Hub - Your Free Digital Toolkit</title>
+    <meta name="description" content="A collection of free, fast, and private online tools including an image compressor, image enhancer, QR code generator, and more.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #111827;
+            --card-color: #1f2937;
+            --text-color: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --accent-color: #3b82f6;
+            --border-color: #374151;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 24px;
+        }
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        header h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: -webkit-linear-gradient(45deg, var(--accent-color), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        header p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 8px auto 0;
+        }
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .tool-card {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .tool-card .icon {
+            font-size: 2.5rem;
+        }
+        .tool-card h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            color: var(--text-color);
+        }
+        .tool-card p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            flex-grow: 1;
+        }
+        .tool-card .tag {
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 9999px;
+            align-self: flex-start;
+        }
+        footer {
+            text-align: center;
+            margin-top: 64px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <div class="content-card">
-            <h1>Privacy Policy</h1>
-            <p><strong>Effective Date:</strong> [Aaj ki date daalein]</p>
-            <p>At Pro Tools Hub, your privacy is our highest priority. This policy outlines how we handle information.</p>
-            
-            <h3>1. No Data Collection</h3>
-            <p>We do not collect, store, or transmit any personal data or files from our users. All tools on this website (including the image compressor, QR generator, etc.) operate entirely on the client-side, meaning all processing is done within your own web browser on your own device. Your files are never uploaded to our or any third-party server.</p>
-            
-            <h3>2. Third-Party Libraries (CDNs)</h3>
-            <p>Our website uses common, trusted third-party libraries (like SheetJS, jsPDF, etc.) hosted on Content Delivery Networks (CDNs) to provide functionality. These CDNs may collect standard, non-personally identifiable information like your IP address for security and analytics, as is standard practice for most websites. We do not have access to this data.</p>
-            
-            <h3>3. Cookies</h3>
-            <p>We do not use tracking cookies. We may use local storage in your browser only to save your preferences (like settings for a tool), but this information is stored on your device and is not accessible to us.</p>
-            
-            <h3>4. Changes to This Policy</h3>
-            <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page.</p>
+        <header>
+            <h1>Pro Tools Hub</h1>
+            <p>Your one-stop collection of free, fast, and privacy-focused tools. All processing is done in your browser.</p>
+        </header>
 
-            <p><a href="index.html">← Go back to the tools</a></p>
-        </div>
-        
-        <footer>
-            <!-- Yahan par naya wala footer code daalein -->
-        </footer>
-    </div>
+      
+<main>
+        <div class="tools-grid">
+            <!-- Image Compressor Tool -->
+            <a href="image-compressor.html" class="tool-card">
+                <div class="icon">ðŸ—œï¸</div>
+                <h2>Image Compressor</h2>
+                <p>Reduce the file size of your images in bulk without losing quality.</p>
+                <span class="tag">Popular</span>
+            </a>
+            
+            <!-- Image Enhancer Tool -->
+            <a href="image-enhancer.html" class="tool-card">
+                <div class="icon">âœ¨</div>
+                <h2>Image Enhancer</h2>
+                <p>Apply filters like brightness, contrast, and saturation to your photos.</p>
+                <span class="tag">New</span>
+            </a>
+
+            <!-- QR Code Generator Tool -->
+            <a href="qr-generator.html" class="tool-card"> <!-- Link to be added later -->
+                <div class="icon">ðŸ“±</div>
+                <h2>QR Code Generator</h2>
+                <p>Create QR codes for URLs, text, Wi-Fi, and more instantly.</p>
+            </a>
+
+            <!-- Excel to PDF Tool -->
+           <a href="excel-to-pdf.html"></a> 
+<div class="tool-card">
+    <div class="icon">ðŸ“„</div>
+    <h2>Excel to PDF</h2>
+    <p>Convert your Excel spreadsheets (.xlsx) into PDF documents online.</p>
+</div>
+    </main>
+    
+    <footer>
+        <p>Â© 2025 All rights reserved - Pro Tools Hub</p>
+    </footer>
+</div>
+
+    
 </body>
 </html>
