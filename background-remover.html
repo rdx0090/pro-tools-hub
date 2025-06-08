@@ -76,7 +76,7 @@
     <script>
         // --- !!! ZAROORI !!! ---
         // Yahan par apni NAYI, SECRET Clipdrop API Key daalein.
-        const apiKey = '7498ed06daac66a44c60960e77df51e99cb38d40f39c13ba012cd911967ac77344fc28dbf0180ab650f77cc1b1eb5a6c';
+        const apiKey = 'YOUR_NEW_API_KEY_HERE';
 
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
@@ -88,10 +88,12 @@
         const resultImage = document.getElementById('result-image');
         const downloadBtn = document.getElementById('download-btn');
 
+        let fakeProgressInterval = null;
+
         browseBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'); });
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropZone.classList.remove('drag-over');
@@ -110,16 +112,20 @@
             resultCard.style.display = 'none';
             statusText.style.color = 'var(--text-secondary)';
             progressContainer.style.display = 'block';
-            updateProgress(10, 'Compressing image for faster upload...');
+            startFakeProgress(10, 'Compressing image for faster upload...');
+
+            // --- Timeout Controller ---
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30-second timeout
 
             try {
-                // --- Pre-compress the image for speed ---
+                // --- Aggressive Pre-compression for speed ---
                 const compressedFile = await imageCompression(file, {
-                    maxSizeMB: 1, // Reduced to 1 MB
-                    maxWidthOrHeight: 1080, // Reduced for faster processing
+                    maxSizeMB: 0.8, // Reduced to 0.8 MB for ultra-fast upload
+                    maxWidthOrHeight: 800, // Reduced for faster AI processing
                     useWebWorker: true,
                 });
-                updateProgress(30, 'Connecting to AI server...');
+                updateFakeProgress(30, 'Uploading to AI server...');
 
                 const formData = new FormData();
                 formData.append('image_file', compressedFile);
@@ -128,22 +134,23 @@
                     method: 'POST',
                     headers: { 'x-api-key': apiKey },
                     body: formData,
+                    signal: controller.signal // Link timeout controller to the request
                 });
-                updateProgress(60, 'AI is processing your image...');
+                clearTimeout(timeoutId); // Clear the timeout if we get a response
+                
+                updateFakeProgress(60, 'AI is working its magic... this can take a moment.');
 
                 if (response.ok) {
                     const imageBlob = await response.blob();
                     const imageUrl = URL.createObjectURL(imageBlob);
                     
-                    updateProgress(100, 'Background removed successfully!');
-                    statusText.style.color = 'var(--success-color)';
+                    stopFakeProgress(100, 'Background removed successfully!', true);
                     
                     resultImage.src = imageUrl;
                     downloadBtn.href = imageUrl;
                     resultCard.style.display = 'block';
                     launchFireworks();
                 } else {
-                    // --- Better Error Handling ---
                     const errorData = await response.json();
                     let errorMessage = errorData.error || 'An unknown API error occurred.';
                     if (response.status === 401 || response.status === 403) {
@@ -155,18 +162,46 @@
                 }
 
             } catch (error) {
+                clearTimeout(timeoutId); // Clear timeout on error too
+                let userFriendlyError = error.message;
+                if (error.name === 'AbortError') {
+                    userFriendlyError = 'Server is taking too long to respond. Please try again with a smaller image.';
+                }
                 console.error('Error:', error);
-                updateProgress(0, `Error: ${error.message}`);
-                statusText.style.color = 'var(--error-color)';
+                stopFakeProgress(0, `Error: ${userFriendlyError}`, false);
             } finally {
-                // --- Re-enable button after process is complete ---
                 browseBtn.disabled = false;
             }
         }
 
-        function updateProgress(percent, message) {
-            progressBar.style.width = `${percent}%`;
+        function startFakeProgress(startPercent, message) {
+            clearInterval(fakeProgressInterval); // Clear any previous interval
+            progressBar.style.width = `${startPercent}%`;
             statusText.textContent = message;
+
+            let currentProgress = startPercent;
+            fakeProgressInterval = setInterval(() => {
+                currentProgress += 2;
+                if (currentProgress < 90) { // Don't let it reach 100% on its own
+                    progressBar.style.width = `${currentProgress}%`;
+                } else {
+                    clearInterval(fakeProgressInterval);
+                }
+            }, 500); // Slowly increment every half second
+        }
+
+        function updateFakeProgress(percent, message) {
+             clearInterval(fakeProgressInterval);
+             progressBar.style.width = `${percent}%`;
+             statusText.textContent = message;
+             startFakeProgress(percent, message);
+        }
+
+        function stopFakeProgress(finalPercent, message, isSuccess) {
+            clearInterval(fakeProgressInterval);
+            progressBar.style.width = `${finalPercent}%`;
+            statusText.textContent = message;
+            statusText.style.color = isSuccess ? 'var(--success-color)' : 'var(--error-color)';
         }
 
         function launchFireworks() {
