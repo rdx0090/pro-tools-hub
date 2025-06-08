@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Background Remover - Pro Tools Hub</title>
+    <title>AI Image Background Remover - Pro Tools Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -37,7 +37,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>✂️ AI Background Remover</h1>
+            <h1>✂️ AI Image Background Remover</h1>
             <p>Powered by Clipdrop. Upload an image to automatically remove its background.</p>
         </header>
 
@@ -70,7 +70,7 @@
         // --- !!! ZAROORI !!! ---
         // Yahan par apni NAYI, SECRET Clipdrop API Key daalein.
         // Is key ko kabhi bhi public GitHub par na daalein.
-        const apiKey = 51312f9a5a239c5bc3af4609cb4ed5e8c28a7b986991f8920ce0db8a3ac946ce12fafc94f582d6cfbc3842709513c312';
+        const apiKey = 'YOUR_NEW_API_KEY_HERE';
 
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
@@ -93,8 +93,8 @@
         });
 
         async function handleFile(file) {
-            if (apiKey === 'b35785ffe65c4f3e8de9243056b28d4973eb2c3e02f932a289181cf83e97a4311b4de1c53ea6042baaaf06da9424aff6') {
-                alert('b35785ffe65c4f3e8de9243056b28d4973eb2c3e02f932a289181cf83e97a4311b4de1c53ea6042baaaf06da9424aff6.');
+            if (apiKey === 'YOUR_NEW_API_KEY_HERE') {
+                alert('Please enter your Clipdrop API key in the image-remover.html file.');
                 return;
             }
             if (!file) return;
