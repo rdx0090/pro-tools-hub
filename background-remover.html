@@ -78,6 +78,7 @@
 
         const apiUrl = '/api/removebg'; // Vercel proxy URL
 
+        // --- Baaki saare elements wahi hain ---
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const browseBtn = document.getElementById('browse-btn');
@@ -87,6 +88,9 @@
         const resultCard = document.getElementById('result-card');
         const resultImage = document.getElementById('result-image');
         const downloadBtn = document.getElementById('download-btn');
+
+        // --- Timer ke liye ek variable ---
+        let timerInterval = null;
 
         browseBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
@@ -99,80 +103,87 @@
         });
 
         function handleFile(file) {
-            if (apiKey === 'VQ7gcp8R8owBXSrL9hXCrxwb') {
+            if (apiKey === 'YOUR_NEW_REMOVE.BG_API_KEY_HERE') {
                 alert('Please enter your new remove.bg API key in the background-remover.html file.');
                 return;
             }
             if (!file) return;
 
             // Reset UI
-            statusText.textContent = `Uploading...`;
+            statusText.textContent = `Starting...`;
             statusText.style.color = 'var(--text-secondary)';
             progressContainer.style.display = 'block';
             progressBar.style.width = '0%';
             resultCard.style.display = 'none';
 
+            // --- NAYA: Timer ko shuru karein ---
+            let seconds = 0;
+            if (timerInterval) clearInterval(timerInterval); // Purana timer saaf karein
+            
             const formData = new FormData();
             formData.append('image_file', file);
             formData.append('size', 'auto');
             
-            // Start Timer
-            const startTime = performance.now();
-
-            // Using XMLHttpRequest to track upload progress
             const xhr = new XMLHttpRequest();
             
-            // Progress Listener
+            // --- NAYA: Progress Listener ---
             xhr.upload.onprogress = (event) => {
                 if (event.lengthComputable) {
                     const percentComplete = (event.loaded / event.total) * 100;
                     progressBar.style.width = percentComplete + '%';
                     statusText.textContent = `Uploading... ${Math.round(percentComplete)}%`;
-                    if(percentComplete === 100) {
-                        statusText.textContent = 'Processing with AI... Please wait.';
-                    }
                 }
             };
             
-            // Success Listener
-            xhr.onload = () => {
-                const endTime = performance.now();
-                const timeTaken = ((endTime - startTime) / 1000).toFixed(2); // in seconds
+            // --- NAYA: Upload shuru hone par Timer start karein ---
+            xhr.upload.onloadstart = () => {
+                timerInterval = setInterval(() => {
+                    seconds++;
+                    const currentMessage = statusText.textContent;
+                    // Agar message "Processing" hai, to timer dikhayein
+                    if (currentMessage.includes('Processing')) {
+                        statusText.textContent = `Processing with AI... (${seconds}s)`;
+                    }
+                }, 1000);
+            };
 
+            // --- NAYA: Upload khatam hone par "Processing" message dikhayein ---
+            xhr.upload.onload = () => {
+                statusText.textContent = `Processing with AI... (${seconds}s)`;
+            };
+            
+            // --- NAYA: Poora process khatam hone par ---
+            xhr.onload = () => {
+                clearInterval(timerInterval); // Timer ko rokein
+                
                 if (xhr.status === 200) {
-                    const imageBlob = xhr.response; // response is a blob
+                    const imageBlob = xhr.response;
                     const imageUrl = URL.createObjectURL(imageBlob);
                     
                     resultImage.src = imageUrl;
                     downloadBtn.href = imageUrl;
                     resultCard.style.display = 'block';
                     
-                    // Success message with timer
-                    statusText.textContent = `Success! 🎉 Background removed in ${timeTaken} seconds.`;
+                    statusText.textContent = `Success! 🎉 Background removed in ${seconds} seconds.`;
                     statusText.style.color = 'var(--success-color)';
                     
-                    // Firecracker / Confetti effect!
-                    confetti({
-                        particleCount: 150,
-                        spread: 180,
-                        origin: { y: 0.6 }
-                    });
+                    confetti({ particleCount: 150, spread: 180, origin: { y: 0.6 } });
 
                 } else {
-                    // Try to parse error from remove.bg
                     try {
                         const errorData = JSON.parse(xhr.responseText);
                         const errorMessage = errorData.errors ? errorData.errors[0].title : 'An unknown error occurred.';
-                        throw new Error(errorMessage);
+                        statusText.textContent = `Error: ${errorMessage}`;
                     } catch (e) {
-                         throw new Error('An unknown error occurred.');
+                         statusText.textContent = 'Error: An unknown error occurred.';
                     }
+                    statusText.style.color = 'var(--error-color)';
                 }
                  progressContainer.style.display = 'none';
             };
             
-            // Error Listener
             xhr.onerror = () => {
+                clearInterval(timerInterval); // Error par bhi timer rokein
                 statusText.textContent = 'Error: Network request failed.';
                 statusText.style.color = 'var(--error-color)';
                 progressContainer.style.display = 'none';
@@ -180,7 +191,7 @@
 
             xhr.open('POST', apiUrl);
             xhr.setRequestHeader('X-Api-Key', apiKey);
-            xhr.responseType = 'blob'; // We expect an image blob back
+            xhr.responseType = 'blob';
             xhr.send(formData);
         }
     </script>
