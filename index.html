@@ -3,148 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Tools Hub - Your Free Digital Toolkit</title>
-    <meta name="description" content="A collection of free, fast, and private online tools including an image compressor, image enhancer, QR code generator, and more.">
+    <title>File Compressor (ZIP) - Pro Tools Hub</title>
+    
+    <!-- Library for creating ZIP files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #111827;
-            --card-color: #1f2937;
-            --text-color: #e5e7eb;
-            --text-secondary: #9ca3af;
-            --accent-color: #3b82f6;
+            --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
+            --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
             --border-color: #374151;
         }
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 24px;
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center;
         }
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 48px;
-        }
-        header h1 {
-            font-size: 2.8rem;
-            font-weight: 700;
-            background: -webkit-linear-gradient(45deg, var(--accent-color), #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        header p {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 8px auto 0;
-        }
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
-        }
-        .tool-card {
-            background-color: var(--card-color);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 24px;
-            text-decoration: none;
-            color: var(--text-color);
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .tool-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        .tool-card .icon {
-            font-size: 2.5rem;
-        }
-        .tool-card h2 {
-            margin: 0;
-            font-size: 1.25rem;
-            color: var(--text-color);
-        }
-        .tool-card p {
-            margin: 0;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            flex-grow: 1;
-        }
-        .tool-card .tag {
-            background-color: var(--accent-color);
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 9999px;
-            align-self: flex-start;
-        }
-        footer {
-            text-align: center;
-            margin-top: 64px;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
+        .container { width: 100%; max-width: 700px; }
+        header { text-align: center; margin-bottom: 32px; }
+        header h1 { font-size: 2.5rem; }
+        header p { font-size: 1.125rem; color: var(--text-secondary); }
+        .card { background-color: var(--card-color); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 24px; }
+        .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; width: 100%; }
+        .btn-primary:hover:not(:disabled) { background-color: var(--accent-hover); }
+        .btn-primary:disabled { background-color: #374151; cursor: not-allowed; }
+        #file-list-container { margin-top: 24px; }
+        #file-list { list-style: none; padding: 0; max-height: 200px; overflow-y: auto; }
+        #file-list li { background-color: var(--bg-color); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; }
+        .file-size { color: var(--text-secondary); }
+        footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Pro Tools Hub</h1>
-            <p>Your one-stop collection of free, fast, and privacy-focused tools. All processing is done in your browser.</p>
+            <h1>📁 File Compressor (ZIP)</h1>
+            <p>Combine multiple files into a single, downloadable ZIP file.</p>
         </header>
 
-      
-<main>
-        <div class="tools-grid">
-            <!-- Image Compressor Tool -->
-            <a href="image-compressor.html" class="tool-card">
-                <div class="icon">ðŸ—œï¸</div>
-                <h2>Image Compressor</h2>
-                <p>Reduce the file size of your images in bulk without losing quality.</p>
-                <span class="tag">Popular</span>
-            </a>
+        <div class="card">
+            <input type="file" id="file-input" multiple style="display: none;">
+            <button id="browse-btn" class="btn-primary">Select Files</button>
+            <div id="file-list-container" style="display: none;">
+                <h3 style="margin-top: 24px;">Selected Files:</h3>
+                <ul id="file-list"></ul>
+            </div>
+        </div>
+        
+        <div class="card">
+            <button id="zip-btn" class="btn-primary" disabled>Create ZIP & Download</button>
+        </div>
+
+        <footer>
+            <p><a href="index.html" style="color: var(--accent-color);">← Back to Hub</a></p>
+            <p>© 2025 All rights reserved - Pro Tools Hub</p>
+        </footer>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const browseBtn = document.getElementById('browse-btn');
+        const zipBtn = document.getElementById('zip-btn');
+        const fileListContainer = document.getElementById('file-list-container');
+        const fileList = document.getElementById('file-list');
+
+        browseBtn.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', handleFiles);
+        zipBtn.addEventListener('click', createZip);
+
+        function handleFiles() {
+            if (fileInput.files.length === 0) {
+                fileListContainer.style.display = 'none';
+                zipBtn.disabled = true;
+                return;
+            }
+
+            fileListContainer.style.display = 'block';
+            fileList.innerHTML = ''; // Clear previous list
+
+            for (const file of fileInput.files) {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${file.name}</span> <span class="file-size">${formatBytes(file.size)}</span>`;
+                fileList.appendChild(li);
+            }
             
-            <!-- Image Enhancer Tool -->
-            <a href="image-enhancer.html" class="tool-card">
-                <div class="icon">âœ¨</div>
-                <h2>Image Enhancer</h2>
-                <p>Apply filters like brightness, contrast, and saturation to your photos.</p>
-                <span class="tag">New</span>
-            </a>
+            zipBtn.disabled = false;
+        }
 
-            <!-- QR Code Generator Tool -->
-            <a href="qr-generator.html" class="tool-card"> <!-- Link to be added later -->
-                <div class="icon">ðŸ“±</div>
-                <h2>QR Code Generator</h2>
-                <p>Create QR codes for URLs, text, Wi-Fi, and more instantly.</p>
-            </a>
+        async function createZip() {
+            if (fileInput.files.length === 0) return;
 
-            <!-- Excel to PDF Tool -->
-           <a href="excel-to-pdf.html"></a> 
-<div class="tool-card">
-    <div class="icon">ðŸ“„</div>
-    <h2>Excel to PDF</h2>
-    <p>Convert your Excel spreadsheets (.xlsx) into PDF documents online.</p>
-</div>
-    </main>
-    
-    <footer>
-        <p>Â© 2025 All rights reserved - Pro Tools Hub</p>
-    </footer>
-</div>
+            zipBtn.textContent = 'Zipping...';
+            zipBtn.disabled = true;
 
-    
+            try {
+                const zip = new JSZip();
+                for (const file of fileInput.files) {
+                    zip.file(file.name, file);
+                }
+                
+                const zipBlob = await zip.generateAsync({ type: "blob" });
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(zipBlob);
+                link.download = 'pro-tools-hub-files.zip';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (error) {
+                console.error("Error creating ZIP:", error);
+                alert("An error occurred while creating the ZIP file.");
+            } finally {
+                zipBtn.textContent = 'Create ZIP & Download';
+                // Keep it enabled so user can re-download if needed, or handle as per choice.
+                zipBtn.disabled = false; 
+            }
+        }
+        
+        function formatBytes(bytes, decimals = 2) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const dm = decimals < 0 ? 0 : decimals;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+        }
+    </script>
 </body>
 </html>
