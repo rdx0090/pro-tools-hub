@@ -15,6 +15,7 @@
             --text-color: #e5e7eb;
             --text-secondary: #9ca3af;
             --accent-color: #3b82f6;
+            --accent-hover: #2563eb; /* Added for button hover */
             --border-color: #374151;
         }
         body {
@@ -96,6 +97,25 @@
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
+        
+        /* --- CSS FOR THE NEW SHARE BUTTON --- */
+        .btn-share {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 9999px; /* Makes it a pill-shaped button */
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 24px; /* Space between button and copyright */
+        }
+
+        .btn-share:hover {
+            background-color: var(--accent-hover);
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body>
@@ -114,7 +134,7 @@
                     <p>Reduce the file size of your images in bulk without losing quality.</p>
                     <span class="tag">Popular</span>
                 </a>
-                
+
                 <!-- Image Enhancer Tool -->
                 <a href="image-enhancer.html" class="tool-card">
                     <div class="icon">✨</div>
@@ -124,20 +144,20 @@
                 </a>
 
                 <!-- QR Code Generator Tool -->
-                <a href="qr-code-generator.html" class="tool-card">
+                <a href="qr-generator.html" class="tool-card"> <!-- Link was updated in your code -->
                     <div class="icon">📱</div>
                     <h2>QR Code Generator</h2>
                     <p>Create QR codes for URLs, text, Wi-Fi, and more instantly.</p>
                 </a>
 
                 <!-- Excel to PDF Tool -->
-                <a href="excel-to-pdf.html" class="tool-card">
+                <a href="excel-to-pdf.html" class="tool-card"> <!-- Link was updated in your code -->
                     <div class="icon">📄</div>
                     <h2>Excel to PDF</h2>
                     <p>Convert your Excel spreadsheets (.xlsx) into PDF documents online.</p>
                 </a>
                 
-                <!-- File Compressor (ZIP) Tool -- THIS IS THE NEW ONE -->
+                <!-- File Compressor (ZIP) Tool -->
                 <a href="file-compressor.html" class="tool-card">
                     <div class="icon">📁</div>
                     <h2>File Compressor (ZIP)</h2>
@@ -148,8 +168,47 @@
         </main>
         
         <footer>
-            <p>© 2025 All rights reserved - Pro Tools Hub</p>
+            <!-- The new Share Button is here -->
+            <button id="share-btn" class="btn-share">🔗 Share with Friends</button>
+            
+            <!-- Your copyright text -->
+            <p style="margin-top: 16px;">© 2025 All rights reserved - Pro Tools Hub</p>
         </footer>
     </div>
+
+    <!-- The JavaScript logic for the Share Button -->
+    <script>
+        const shareBtn = document.getElementById('share-btn');
+        
+        shareBtn.addEventListener('click', async () => {
+            const shareData = {
+                title: 'Pro Tools Hub',
+                text: 'Check out this awesome collection of free online tools!',
+                url: window.location.href // This will share the current page URL
+            };
+
+            // Check if the Web Share API is available (for mobile)
+            if (navigator.share) {
+                try {
+                    await navigator.share(shareData);
+                } catch (err) {
+                    console.log('Error sharing:', err);
+                }
+            } else {
+                // Fallback for desktop or unsupported browsers: Copy to clipboard
+                try {
+                    await navigator.clipboard.writeText(window.location.href);
+                    // Give user feedback
+                    shareBtn.textContent = '✅ Link Copied!';
+                    setTimeout(() => {
+                        shareBtn.innerHTML = '🔗 Share with Friends';
+                    }, 2000); // Reset text after 2 seconds
+                } catch (err) {
+                    console.error('Failed to copy link: ', err);
+                    alert('Could not copy link. Please copy it manually.');
+                }
+            }
+        });
+    </script>
 </body>
 </html>
