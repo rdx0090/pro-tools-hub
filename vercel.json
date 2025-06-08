@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/api/remove-background",
-      "destination": "https://api.clipdrop.co/v1/remove-background"
+      "source": "/api/removebg",
+      "destination": "https://api.remove.bg/v1.0/removebg"
     }
   ]
 }
