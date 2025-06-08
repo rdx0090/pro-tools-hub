@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Background Remover - Pro Tools Hub</title>
+    <title>Easy Background Remover - Pro Tools Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,7 +13,10 @@
             --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
             --border-color: #374151; --success-color: #10b981; --error-color: #ef4444;
         }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center; }
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center;
+        }
         .container { width: 100%; max-width: 800px; }
         header { text-align: center; margin-bottom: 32px; }
         header h1 { font-size: 2.5rem; }
@@ -34,12 +37,12 @@
 <body>
     <div class="container">
         <header>
-            <h1>✨ AI Background Remover</h1>
-            <p>Powered by Clipdrop. Upload an image to automatically remove its background.</p>
+            <h1>✂️ Easy Background Remover</h1>
+            <p>Powered by remove.bg. The simplest way to remove image backgrounds.</p>
         </header>
 
         <div class="card" id="upload-card">
-            <input type="file" id="file-input" accept="image/png, image/jpeg, image/webp" style="display: none;">
+            <input type="file" id="file-input" accept="image/png, image/jpeg" style="display: none;">
             <div id="drop-zone" class="drop-zone">
                 <p><strong>Drag & drop your image here</strong></p>
                 <p>or</p>
@@ -59,14 +62,18 @@
 
         <footer>
             <p><a href="index.html" style="color: var(--accent-color);">← Back to Hub</a></p>
-            <p>© 2025 All rights reserved - Pro Tools Hub</p>
+            <p>© 2024 All rights reserved - Pro Tools Hub</p>
         </footer>
     </div>
 
     <script>
-        const apiKey = 'ba3ada80c9694098099dd129374f11998225f19cacaf97fe73a8a6de58fbae2774fda06a3fa2d42f48a182dd74eb1512'; // <-- YAHAN APNI NAYI KEY DAALEIN
+        // --- !!! ZAROORI !!! ---
+        // Yahan par apni NAYI, remove.bg ki API Key daalein.
+        const apiKey = 'YOUR_REMOVE.BG_API_KEY_HERE';
 
-        // ... (baaki saare const declarations)
+        // Yehi hai aasan tareeka, hum Vercel ka proxy istemal karenge.
+        const apiUrl = '/api/removebg';
+
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const browseBtn = document.getElementById('browse-btn');
@@ -78,46 +85,57 @@
 
         browseBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
+        
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFile(e.dataTransfer.files[0]); });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            handleFile(e.dataTransfer.files[0]);
+        });
 
         async function handleFile(file) {
+            if (apiKey === 'YOUR_REMOVE.BG_API_KEY_HERE') {
+                alert('Please enter your remove.bg API key in the background-remover.html file.');
+                return;
+            }
             if (!file) return;
-            statusText.textContent = `Processing "${file.name}"...`;
+
+            statusText.textContent = `Processing your image...`;
             loader.style.display = 'block';
             resultCard.style.display = 'none';
-            statusText.style.color = 'var(--text-secondary)';
 
             const formData = new FormData();
             formData.append('image_file', file);
+            formData.append('size', 'auto');
 
             try {
-                const response = await fetch('/api/remove-background', { // Using the proxy URL
+                const response = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'x-api-key': apiKey, },
+                    headers: {
+                        'X-Api-Key': apiKey,
+                    },
                     body: formData,
                 });
 
                 if (response.ok) {
                     const imageBlob = await response.blob();
                     const imageUrl = URL.createObjectURL(imageBlob);
+                    
                     resultImage.src = imageUrl;
                     downloadBtn.href = imageUrl;
                     resultCard.style.display = 'block';
                     statusText.textContent = 'Background removed successfully!';
                     statusText.style.color = 'var(--success-color)';
                 } else {
-                    // This is the new, improved error handling
-                    const errorResponseText = await response.text();
-                    console.error('API responded with an error page:', errorResponseText);
-                    statusText.textContent = `Error: API returned an error page. Check your API Key or Clipdrop account status.`;
-                    statusText.style.color = 'var(--error-color)';
+                    // Try to get a more detailed error message
+                    const errorData = await response.json();
+                    const errorMessage = errorData.errors ? errorData.errors[0].title : 'An unknown error occurred.';
+                    throw new Error(errorMessage);
                 }
-
             } catch (error) {
-                console.error('Fetch Error:', error);
-                statusText.textContent = `Error: ${error.message}. The request failed.`;
+                console.error('Error:', error);
+                statusText.textContent = `Error: ${error.message}`;
                 statusText.style.color = 'var(--error-color)';
             } finally {
                 loader.style.display = 'none';
