@@ -6,11 +6,10 @@
     <title>QR Code Generator - Pro Tools Hub</title>
     <!-- Library for generating QR Codes -->
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Using the same consistent styling -->
     <style>
         :root {
             --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
@@ -25,41 +24,67 @@
         header { text-align: center; margin-bottom: 32px; }
         header h1 { font-size: 2.5rem; }
         header p { font-size: 1.125rem; color: var(--text-secondary); }
-        .card { background-color: var(--card-color); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 24px; }
+        .card { background-color: var(--card-color); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 24px; position: relative; }
         .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; width: 100%; }
         .btn-primary:hover { background-color: var(--accent-hover); }
         textarea {
-            width: 100%;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-color);
-            padding: 12px;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            min-height: 100px;
-            box-sizing: border-box;
-            resize: vertical;
+            width: 100%; background-color: var(--bg-color); border: 1px solid var(--border-color);
+            border-radius: 8px; color: var(--text-color); padding: 12px; font-family: 'Inter', sans-serif;
+            font-size: 1rem; min-height: 100px; box-sizing: border-box; resize: vertical;
         }
         #qrcode-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
-            background-color: white;
-            border-radius: 8px;
-            min-height: 256px;
-            margin-top: 24px;
+            display: flex; justify-content: center; align-items: center; padding: 24px;
+            background-color: white; border-radius: 8px; min-height: 256px;
+            margin-top: 16px; position: relative; overflow: hidden;
         }
-        #qrcode-container img {
-            max-width: 100%;
-        }
+        /* Fix: QR Code library by default hides the canvas, we need it for download */
+        #qrcode-container canvas { display: block !important; }
+        #qrcode-container img { display: none !important; } /* We will use canvas instead */
+        
         .btn-secondary {
             background-color: var(--border-color); color: var(--text-color); padding: 10px 20px;
             border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer;
             transition: background-color 0.2s; margin-top: 16px; width: 100%; display: none;
         }
         footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
+        
+        /* Naya: Generation Status ke liye Style */
+        #status-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 16px;
+            height: 20px;
+        }
+
+        /* Naya: Confetti/Firecracker Animation ke liye CSS */
+        #confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 16px;
+            background: #f00;
+            top: -20px;
+            animation: confetti-fall 3s linear forwards;
+        }
+        @keyframes confetti-fall {
+            from {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(300px) rotate(720deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -77,8 +102,10 @@
 
         <div class="card" id="result-card" style="display: none;">
             <div id="qrcode-container">
-                <!-- QR Code will appear here -->
+                <!-- Naya: Confetti container -->
+                <div id="confetti-container"></div>
             </div>
+            <p id="status-text"></p> <!-- Naya: Status Text ke liye Element -->
             <button id="download-btn" class="btn-secondary">Download PNG</button>
         </div>
 
@@ -94,8 +121,8 @@
         const qrTextInput = document.getElementById('qr-text');
         const qrContainer = document.getElementById('qrcode-container');
         const resultCard = document.getElementById('result-card');
-        
-        let qrcode = null;
+        const statusText = document.getElementById('status-text'); // Naya
+        const confettiContainer = document.getElementById('confetti-container'); // Naya
 
         generateBtn.addEventListener('click', () => {
             const text = qrTextInput.value.trim();
@@ -104,11 +131,12 @@
                 return;
             }
 
-            // Clear previous QR code
-            qrContainer.innerHTML = "";
+            // Naya: Start time record karein
+            const startTime = performance.now();
+
+            qrContainer.innerHTML = '<div id="confetti-container"></div>'; // Clear and re-add confetti container
             
-            // Create a new QR Code
-            qrcode = new QRCode(qrContainer, {
+            new QRCode(qrContainer, {
                 text: text,
                 width: 256,
                 height: 256,
@@ -117,20 +145,54 @@
                 correctLevel : QRCode.CorrectLevel.H
             });
             
+            // Naya: End time record karein aur duration dikhayein
+            const endTime = performance.now();
+            const duration = Math.round(endTime - startTime);
+            statusText.textContent = `🎉 Generated in ${duration} ms!`;
+
             resultCard.style.display = 'block';
             downloadBtn.style.display = 'block';
+            
+            // Naya: Confetti/Firecracker animation chalaayein
+            showConfetti();
         });
 
+        // Theek kiya hua Download Function
         downloadBtn.addEventListener('click', () => {
-            // The library creates an img tag inside the container. We get its source.
-            const imgEl = qrContainer.querySelector('img');
-            if (imgEl) {
+            // Hum image ke bajaye canvas ko dhoondenge
+            const canvasEl = qrContainer.querySelector('canvas');
+            if (canvasEl) {
                 const link = document.createElement('a');
                 link.download = 'qrcode.png';
-                link.href = imgEl.src;
+                // Canvas se data URL lena zyada reliable hai
+                link.href = canvasEl.toDataURL('image/png');
                 link.click();
+            } else {
+                alert("Could not find QR code to download. Please generate it again.");
             }
         });
+        
+        // Naya: Confetti/Firecracker Function
+        function showConfetti() {
+            const currentConfettiContainer = document.getElementById('confetti-container');
+            currentConfettiContainer.innerHTML = ''; // Clear old confetti
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                currentConfettiContainer.appendChild(confetti);
+            }
+            
+            // 3 second baad confetti saaf kar dein
+            setTimeout(() => {
+                currentConfettiContainer.innerHTML = '';
+            }, 3000);
+        }
     </script>
 </body>
 </html>
