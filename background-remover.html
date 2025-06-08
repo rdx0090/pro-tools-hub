@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Easy Background Remover - Pro Tools Hub</title>
+    <!-- Confetti Library for firecracker effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -26,9 +29,9 @@
         .btn-primary:hover { background-color: var(--accent-hover); }
         .drop-zone { border: 2px dashed var(--border-color); border-radius: 12px; padding: 48px 24px; text-align: center; cursor: pointer; transition: background-color 0.2s; }
         .drop-zone.drag-over { background-color: rgba(59, 130, 246, 0.1); border-color: var(--accent-color); }
-        .status-area { margin-top: 16px; text-align: center; color: var(--text-secondary); height: 40px; }
-        .loader { margin: 0 auto; width: 24px; height: 24px; border: 3px solid var(--border-color); border-top: 3px solid var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .status-area { margin-top: 16px; text-align: center; color: var(--text-secondary); min-height: 48px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .progress-bar-container { width: 100%; background-color: var(--border-color); border-radius: 99px; height: 8px; margin-top: 8px; display: none; }
+        .progress-bar { width: 0%; height: 100%; background-color: var(--accent-color); border-radius: 99px; transition: width 0.3s ease; }
         .image-result-container { display: none; text-align: center; }
         .image-result-container img { max-width: 100%; max-height: 400px; border-radius: 8px; border: 1px solid var(--border-color); }
         footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
@@ -50,7 +53,9 @@
             </div>
             <div class="status-area">
                 <p id="status-text">Select an image to begin.</p>
-                <div id="loader" class="loader"></div>
+                <div class="progress-bar-container" id="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
             </div>
         </div>
 
@@ -69,23 +74,22 @@
     <script>
         // --- !!! ZAROORI !!! ---
         // Yahan par apni NAYI, remove.bg ki API Key daalein.
-        const apiKey = 'VQ7gcp8R8owBXSrL9hXCrxwb';
+        const apiKey = 'YOUR_NEW_REMOVE.BG_API_KEY_HERE';
 
-        // Yehi hai aasan tareeka, hum Vercel ka proxy istemal karenge.
-        const apiUrl = '/api/removebg';
+        const apiUrl = '/api/removebg'; // Vercel proxy URL
 
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const browseBtn = document.getElementById('browse-btn');
         const statusText = document.getElementById('status-text');
-        const loader = document.getElementById('loader');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
         const resultCard = document.getElementById('result-card');
         const resultImage = document.getElementById('result-image');
         const downloadBtn = document.getElementById('download-btn');
 
         browseBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
-        
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
         dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
         dropZone.addEventListener('drop', (e) => {
@@ -94,52 +98,90 @@
             handleFile(e.dataTransfer.files[0]);
         });
 
-        async function handleFile(file) {
-            if (apiKey === 'YOUR_REMOVE.BG_API_KEY_HERE') {
-                alert('Please enter your remove.bg API key in the background-remover.html file.');
+        function handleFile(file) {
+            if (apiKey === 'YOUR_NEW_REMOVE.BG_API_KEY_HERE') {
+                alert('Please enter your new remove.bg API key in the background-remover.html file.');
                 return;
             }
             if (!file) return;
 
-            statusText.textContent = `Processing your image...`;
-            loader.style.display = 'block';
+            // Reset UI
+            statusText.textContent = `Uploading...`;
+            statusText.style.color = 'var(--text-secondary)';
+            progressContainer.style.display = 'block';
+            progressBar.style.width = '0%';
             resultCard.style.display = 'none';
 
             const formData = new FormData();
             formData.append('image_file', file);
             formData.append('size', 'auto');
+            
+            // Start Timer
+            const startTime = performance.now();
 
-            try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'X-Api-Key': apiKey,
-                    },
-                    body: formData,
-                });
+            // Using XMLHttpRequest to track upload progress
+            const xhr = new XMLHttpRequest();
+            
+            // Progress Listener
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable) {
+                    const percentComplete = (event.loaded / event.total) * 100;
+                    progressBar.style.width = percentComplete + '%';
+                    statusText.textContent = `Uploading... ${Math.round(percentComplete)}%`;
+                    if(percentComplete === 100) {
+                        statusText.textContent = 'Processing with AI... Please wait.';
+                    }
+                }
+            };
+            
+            // Success Listener
+            xhr.onload = () => {
+                const endTime = performance.now();
+                const timeTaken = ((endTime - startTime) / 1000).toFixed(2); // in seconds
 
-                if (response.ok) {
-                    const imageBlob = await response.blob();
+                if (xhr.status === 200) {
+                    const imageBlob = xhr.response; // response is a blob
                     const imageUrl = URL.createObjectURL(imageBlob);
                     
                     resultImage.src = imageUrl;
                     downloadBtn.href = imageUrl;
                     resultCard.style.display = 'block';
-                    statusText.textContent = 'Background removed successfully!';
+                    
+                    // Success message with timer
+                    statusText.textContent = `Success! 🎉 Background removed in ${timeTaken} seconds.`;
                     statusText.style.color = 'var(--success-color)';
+                    
+                    // Firecracker / Confetti effect!
+                    confetti({
+                        particleCount: 150,
+                        spread: 180,
+                        origin: { y: 0.6 }
+                    });
+
                 } else {
-                    // Try to get a more detailed error message
-                    const errorData = await response.json();
-                    const errorMessage = errorData.errors ? errorData.errors[0].title : 'An unknown error occurred.';
-                    throw new Error(errorMessage);
+                    // Try to parse error from remove.bg
+                    try {
+                        const errorData = JSON.parse(xhr.responseText);
+                        const errorMessage = errorData.errors ? errorData.errors[0].title : 'An unknown error occurred.';
+                        throw new Error(errorMessage);
+                    } catch (e) {
+                         throw new Error('An unknown error occurred.');
+                    }
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                statusText.textContent = `Error: ${error.message}`;
+                 progressContainer.style.display = 'none';
+            };
+            
+            // Error Listener
+            xhr.onerror = () => {
+                statusText.textContent = 'Error: Network request failed.';
                 statusText.style.color = 'var(--error-color)';
-            } finally {
-                loader.style.display = 'none';
-            }
+                progressContainer.style.display = 'none';
+            };
+
+            xhr.open('POST', apiUrl);
+            xhr.setRequestHeader('X-Api-Key', apiKey);
+            xhr.responseType = 'blob'; // We expect an image blob back
+            xhr.send(formData);
         }
     </script>
 </body>
