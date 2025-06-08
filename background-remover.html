@@ -76,7 +76,7 @@
     <script>
         // --- !!! ZAROORI !!! ---
         // Yahan par apni NAYI, SECRET Clipdrop API Key daalein.
-        const apiKey = '7498ed06daac66a44c60960e77df51e99cb38d40f39c13ba012cd911967ac77344fc28dbf0180ab650f77cc1b1eb5a6c';
+        const apiKey = 'YOUR_NEW_API_KEY_HERE';
 
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
@@ -93,7 +93,7 @@
         browseBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', (e) => handleFile(e.target.files[0]));
         dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropZone.classList.remove('drag-over');
@@ -101,28 +101,26 @@
         });
 
         async function handleFile(file) {
+            // alert('File handling started!'); // DEBUGGING ALERT
             if (apiKey === 'YOUR_NEW_API_KEY_HERE') {
                 alert('Please enter your Clipdrop API key in the HTML file.');
                 return;
             }
             if (!file) return;
 
-            // --- UI Reset and Disable Button ---
             browseBtn.disabled = true;
             resultCard.style.display = 'none';
             statusText.style.color = 'var(--text-secondary)';
             progressContainer.style.display = 'block';
             startFakeProgress(10, 'Compressing image for faster upload...');
 
-            // --- Timeout Controller ---
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30-second timeout
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
 
             try {
-                // --- Aggressive Pre-compression for speed ---
                 const compressedFile = await imageCompression(file, {
-                    maxSizeMB: 0.8, // Reduced to 0.8 MB for ultra-fast upload
-                    maxWidthOrHeight: 800, // Reduced for faster AI processing
+                    maxSizeMB: 0.8,
+                    maxWidthOrHeight: 800,
                     useWebWorker: true,
                 });
                 updateFakeProgress(30, 'Uploading to AI server...');
@@ -134,9 +132,9 @@
                     method: 'POST',
                     headers: { 'x-api-key': apiKey },
                     body: formData,
-                    signal: controller.signal // Link timeout controller to the request
+                    signal: controller.signal
                 });
-                clearTimeout(timeoutId); // Clear the timeout if we get a response
+                clearTimeout(timeoutId);
                 
                 updateFakeProgress(60, 'AI is working its magic... this can take a moment.');
 
@@ -162,10 +160,10 @@
                 }
 
             } catch (error) {
-                clearTimeout(timeoutId); // Clear timeout on error too
+                clearTimeout(timeoutId);
                 let userFriendlyError = error.message;
                 if (error.name === 'AbortError') {
-                    userFriendlyError = 'Server is taking too long to respond. Please try again with a smaller image.';
+                    userFriendlyError = 'Server is taking too long to respond. Please try again.';
                 }
                 console.error('Error:', error);
                 stopFakeProgress(0, `Error: ${userFriendlyError}`, false);
@@ -175,19 +173,19 @@
         }
 
         function startFakeProgress(startPercent, message) {
-            clearInterval(fakeProgressInterval); // Clear any previous interval
+            clearInterval(fakeProgressInterval);
             progressBar.style.width = `${startPercent}%`;
             statusText.textContent = message;
 
             let currentProgress = startPercent;
             fakeProgressInterval = setInterval(() => {
                 currentProgress += 2;
-                if (currentProgress < 90) { // Don't let it reach 100% on its own
+                if (currentProgress < 90) {
                     progressBar.style.width = `${currentProgress}%`;
                 } else {
                     clearInterval(fakeProgressInterval);
                 }
-            }, 500); // Slowly increment every half second
+            }, 500);
         }
 
         function updateFakeProgress(percent, message) {
