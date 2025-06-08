@@ -4,150 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator - Pro Tools Hub</title>
-    <meta name="description" content="Generate custom QR codes for URLs, text, Wi-Fi, and more.">
-    
-    <!-- QR Code Library -->
+    <!-- Library for generating QR Codes -->
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Using the same consistent styling -->
     <style>
         :root {
             --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
             --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
-            --border-color: #374151; --input-bg-color: #374151;
+            --border-color: #374151;
         }
         body {
             font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
-            margin: 0; padding: 24px;
+            margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center;
         }
-        .container { width: 100%; max-width: 900px; margin: 0 auto; }
+        .container { width: 100%; max-width: 600px; }
         header { text-align: center; margin-bottom: 32px; }
         header h1 { font-size: 2.5rem; }
-        header p { color: var(--text-secondary); }
-        .back-link { display: inline-block; margin-bottom: 24px; color: var(--accent-color); text-decoration: none; font-weight: 500; }
-        .back-link:hover { text-decoration: underline; }
-        .tool-interface {
-            background-color: var(--card-color); border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 24px; display: grid; grid-template-columns: 1fr; gap: 32px;
+        header p { font-size: 1.125rem; color: var(--text-secondary); }
+        .card { background-color: var(--card-color); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 24px; }
+        .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; width: 100%; }
+        .btn-primary:hover { background-color: var(--accent-hover); }
+        textarea {
+            width: 100%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            padding: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            min-height: 100px;
+            box-sizing: border-box;
+            resize: vertical;
         }
-        @media (min-width: 768px) { .tool-interface { grid-template-columns: 1fr 280px; } }
-        .qr-options h2 { margin-top: 0; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-secondary); }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 10px; background-color: var(--input-bg-color);
-            border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-color); box-sizing: border-box;
+        #qrcode-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            background-color: white;
+            border-radius: 8px;
+            min-height: 256px;
+            margin-top: 24px;
         }
-        .form-group textarea { min-height: 80px; resize: vertical; }
-        .button {
-            background-color: var(--accent-color); color: white; padding: 12px 20px;
-            border: none; border-radius: 6px; font-weight: 600; cursor: pointer;
-            transition: background-color 0.2s; width: 100%; display: block; text-align: center; text-decoration: none;
+        #qrcode-container img {
+            max-width: 100%;
         }
-        .button:hover { background-color: var(--accent-hover); }
-        .qr-code-display { text-align: center; }
-        #qrCodeOutput {
-            background-color: white; border-radius: 8px; padding: 16px;
-            display: inline-flex; justify-content: center; align-items: center; margin-bottom: 16px;
+        .btn-secondary {
+            background-color: var(--border-color); color: var(--text-color); padding: 10px 20px;
+            border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer;
+            transition: background-color 0.2s; margin-top: 16px; width: 100%; display: none;
         }
-        #qrCodePlaceholder { color: var(--text-secondary); }
-        footer { text-align: center; margin-top: 48px; padding-bottom: 24px; color: var(--text-secondary); font-size: 0.9rem; }
+        footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="index.html" class="back-link">← Back to Hub</a>
         <header>
-            <h1>QR Code Generator</h1>
-            <p>Create custom QR codes for URLs, text, Wi-Fi, and more.</p>
+            <h1>📱 QR Code Generator</h1>
+            <p>Enter any text or URL to generate a QR code instantly.</p>
         </header>
 
-        <main>
-            <div class="tool-interface">
-                <div class="qr-options">
-                    <h2>Options</h2>
-                    <div class="form-group">
-                        <label for="qrData">Text or URL</label>
-                        <textarea id="qrData" placeholder="https://google.com"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="qrSize">Size (px)</label>
-                        <input type="number" id="qrSize" value="256" min="50" max="1000">
-                    </div>
-                    <div class="form-group">
-                        <label for="qrFgColor">Foreground Color</label>
-                        <input type="color" id="qrFgColor" value="#000000">
-                    </div>
-                    <div class="form-group">
-                        <label for="qrBgColor">Background Color</label>
-                        <input type="color" id="qrBgColor" value="#ffffff">
-                    </div>
-                    <button id="generateBtn" class="button">Generate QR Code</button>
-                </div>
-                
-                <div class="qr-code-display">
-                    <h2>Preview</h2>
-                    <div id="qrCodeOutput">
-                        <p id="qrCodePlaceholder">Your QR Code will appear here.</p>
-                    </div>
-                    <a id="downloadBtn" class="button" style="display: none;">Download PNG</a>
-                </div>
+        <div class="card">
+            <label for="qr-text" style="color: var(--text-secondary); margin-bottom: 8px; display: block;">Your Text or URL</label>
+            <textarea id="qr-text" placeholder="e.g., https://www.google.com"></textarea>
+            <button id="generate-btn" class="btn-primary" style="margin-top: 16px;">Generate QR Code</button>
+        </div>
+
+        <div class="card" id="result-card" style="display: none;">
+            <div id="qrcode-container">
+                <!-- QR Code will appear here -->
             </div>
-        </main>
+            <button id="download-btn" class="btn-secondary">Download PNG</button>
+        </div>
+
+        <footer>
+            <p><a href="index.html" style="color: var(--accent-color);">← Back to Hub</a></p>
+            <p>© 2024 All rights reserved - Pro Tools Hub</p>
+        </footer>
     </div>
-    
-    <footer>
-        <p>© 2024 All rights reserved - Pro Tools Hub</p>
-    </footer>
 
     <script>
-        const generateBtn = document.getElementById('generateBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const qrCodeOutput = document.getElementById('qrCodeOutput');
+        const generateBtn = document.getElementById('generate-btn');
+        const downloadBtn = document.getElementById('download-btn');
+        const qrTextInput = document.getElementById('qr-text');
+        const qrContainer = document.getElementById('qrcode-container');
+        const resultCard = document.getElementById('result-card');
         
         let qrcode = null;
 
-        function generateQrCode() {
-            const data = document.getElementById('qrData').value.trim();
-            const size = parseInt(document.getElementById('qrSize').value);
-            const fgColor = document.getElementById('qrFgColor').value;
-            const bgColor = document.getElementById('qrBgColor').value;
-
-            if (!data) {
-                alert("Please enter some text or URL.");
+        generateBtn.addEventListener('click', () => {
+            const text = qrTextInput.value.trim();
+            if (text === "") {
+                alert("Please enter some text or a URL.");
                 return;
             }
 
             // Clear previous QR code
-            qrCodeOutput.innerHTML = "";
-            qrCodeOutput.style.backgroundColor = bgColor;
-
-            qrcode = new QRCode(qrCodeOutput, {
-                text: data,
-                width: size,
-                height: size,
-                colorDark: fgColor,
-                colorLight: bgColor,
-                correctLevel: QRCode.CorrectLevel.H
+            qrContainer.innerHTML = "";
+            
+            // Create a new QR Code
+            qrcode = new QRCode(qrContainer, {
+                text: text,
+                width: 256,
+                height: 256,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
             });
-
+            
+            resultCard.style.display = 'block';
             downloadBtn.style.display = 'block';
-        }
+        });
 
-        function downloadQrCode() {
-            const imgEl = qrCodeOutput.querySelector('img');
+        downloadBtn.addEventListener('click', () => {
+            // The library creates an img tag inside the container. We get its source.
+            const imgEl = qrContainer.querySelector('img');
             if (imgEl) {
                 const link = document.createElement('a');
                 link.download = 'qrcode.png';
                 link.href = imgEl.src;
                 link.click();
             }
-        }
-
-        generateBtn.addEventListener('click', generateQrCode);
-        downloadBtn.addEventListener('click', downloadQrCode);
+        });
     </script>
 </body>
 </html>
