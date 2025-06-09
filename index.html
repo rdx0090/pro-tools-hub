@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Tools Hub - Your Free Digital Toolkit</title>
+    <!-- 1. Title Update -->
+    <title>MagicKit - Your Free Digital Toolkit</title>
     <meta name="description" content="A collection of free, fast, and private online tools including an image compressor, image enhancer, QR code generator, and more.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +16,7 @@
             --text-color: #e5e7eb;
             --text-secondary: #9ca3af;
             --accent-color: #3b82f6;
-            --accent-hover: #2563eb; /* Added for button hover */
+            --accent-hover: #2563eb; 
             --border-color: #374151;
         }
         body {
@@ -34,12 +35,22 @@
             text-align: center;
             margin-bottom: 48px;
         }
+        /* --- Naya Style yahan add kiya hai --- */
+        .brand-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 4px;
+        }
         header h1 {
             font-size: 2.8rem;
             font-weight: 700;
             background: -webkit-linear-gradient(45deg, var(--accent-color), #a855f7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-top: 0; /* Extra space hatane ke liye */
         }
         header p {
             font-size: 1.125rem;
@@ -97,21 +108,18 @@
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
-
-        /* --- CSS FOR THE NEW SHARE BUTTON --- */
         .btn-share {
             background-color: var(--accent-color);
             color: white;
             padding: 12px 24px;
             border: none;
-            border-radius: 9999px; /* Makes it a pill-shaped button */
+            border-radius: 9999px; 
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            margin-bottom: 24px; /* Space between button and copyright */
+            margin-bottom: 24px; 
         }
-
         .btn-share:hover {
             background-color: var(--accent-hover);
             transform: scale(1.05);
@@ -121,6 +129,8 @@
 <body>
     <div class="container">
         <header>
+            <!-- 2. "MagicKit" yahan add kiya hai -->
+            <div class="brand-name">MagicKit</div>
             <h1>Pro Tools Hub</h1>
             <p>Your one-stop collection of free, fast, and privacy-focused tools. All processing is done in your browser.</p>
         </header>
@@ -179,8 +189,8 @@
             <!-- The new Share Button is here -->
             <button id="share-btn" class="btn-share">🔗 Share with Friends</button>
 
-            <!-- Your copyright text -->
-            <p style="margin-top: 16px;">© 2025 All rights reserved - Pro Tools Hub</p>
+            <!-- 3. Copyright Update -->
+            <p style="margin-top: 16px;">© 2025 All rights reserved - MagicKit</p>
         </footer>
     </div>
 
@@ -190,9 +200,9 @@
 
         shareBtn.addEventListener('click', async () => {
             const shareData = {
-                title: 'Pro Tools Hub',
-                text: 'Check out this awesome collection of free online tools!',
-                url: window.location.href // This will share the current page URL
+                title: 'MagicKit - Free Online Tools', // Share title bhi update kar diya
+                text: 'Check out this awesome collection of free online tools on MagicKit!', // Share text bhi update kar diya
+                url: window.location.href 
             };
 
             // Check if the Web Share API is available (for mobile)
