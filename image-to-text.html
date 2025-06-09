@@ -3,7 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image to Text (OCR) - Magic Kit</title>
+
+    <!-- ============================================= -->
+    <!--  SEO CHANGES START HERE                       -->
+    <!-- ============================================= -->
+    
+    <title>Free Image to Text Converter (OCR) - Extract Text from Images | MagicKit</title>
+    <meta name="description" content="Extract editable text from any image or screenshot with MagicKit's free online OCR tool. Convert photos, documents, and images to text instantly and accurately.">
+    <meta name="keywords" content="image to text, ocr online, extract text from image, photo to text converter, free ocr, read text from image, MagicKit">
+
+    <!-- ============================================= -->
+    <!--  SEO CHANGES END HERE                         -->
+    <!-- ============================================= -->
+
     <!-- Tesseract.js library for OCR -->
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -94,7 +106,7 @@
                         }
                     }
                 );
-                
+
                 statusText.textContent = 'Extraction complete!';
                 resultText.value = text;
                 resultCard.style.display = 'block';
@@ -106,7 +118,7 @@
                 progressBar.style.display = 'none';
             }
         }
-        
+
         function copyToClipboard() {
             resultText.select();
             document.execCommand('copy');
