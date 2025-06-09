@@ -12,6 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
 
     <style>
+        /* Aapka poora CSS yahan waisa ka waisa hai... no changes needed */
         :root {
             --bg-color: #111827;
             --card-color: #1f2937;
@@ -322,41 +323,111 @@
         </footer>
     </div>
 
+    <!-- ====================================================================== -->
+    <!-- JAVASCRIPT SECTION (SOUND ADDED) -->
+    <!-- ====================================================================== -->
     <script>
-        // Aapka saara purana JavaScript code yahan waisa ka waisa hai...
-        const shareBtn = document.getElementById('share-btn');
-        shareBtn.addEventListener('click', async () => { /* ... (your share code) ... */ });
-        const searchIconBtn = document.querySelector('.search-btn-icon');
-        const searchBoxContainer = document.getElementById('search-box-container');
-        const searchInput = document.getElementById('search-input');
-        const closeSearchBtn = document.getElementById('close-search-btn');
-        searchIconBtn.addEventListener('click', (event) => { /* ... (your search code) ... */ });
-        closeSearchBtn.addEventListener('click', () => { /* ... (your search code) ... */ });
-        document.addEventListener('click', (event) => { /* ... (your search code) ... */ });
-        searchBoxContainer.addEventListener('click', (event) => { /* ... (your search code) ... */ });
-        document.addEventListener('keydown', (event) => { /* ... (your search code) ... */ });
-        const toolCards = document.querySelectorAll('.tool-card');
-        function filterToolCards(searchTerm) { /* ... (your search code) ... */ }
-        searchInput.addEventListener('input', () => { filterToolCards(searchInput.value); });
-        
-        // --- CLICK SOUND CODE (UPDATED FOR BETTER PERFORMANCE) ---
-        
-        const clickSound = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_2b28b8a82b.mp3');
-        clickSound.volume = 0.5;
+        document.addEventListener('DOMContentLoaded', () => {
 
-        toolCards.forEach(card => {
-            card.addEventListener('click', (e) => {
-                // Sabse zaroori: Link ko turant jaane se rokte hain.
-                e.preventDefault(); 
+            // --- 1. SOUND SETUP ---
+            // Hum 3 alag sound effects banayenge
+            const clickSound = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_2b28b8a82b.mp3'); // General click
+            const openSound = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_14856f2b7f.mp3');  // For opening things
+            const closeSound = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_e08283350a.mp3'); // For closing things
 
-                // Sound bajate hain.
-                clickSound.play();
-                
-                // Thoda sa intezaar karte hain (150 milliseconds) taaki sound sunai de.
-                setTimeout(() => {
-                    // Ab link par jaate hain.
-                    window.location.href = card.href;
-                }, 150); 
+            // Ek function jo sound ko aaram se bajayega
+            function playSound(sound) {
+                sound.volume = 0.4; // Aawaz ko halka rakhte hain
+                sound.currentTime = 0; // Rewind to start
+                sound.play();
+            }
+            
+            // --- 2. SEARCH LOGIC (SOUND ADDED) ---
+            const searchIconBtn = document.querySelector('.search-btn-icon');
+            const searchBoxContainer = document.getElementById('search-box-container');
+            const searchInput = document.getElementById('search-input');
+            const closeSearchBtn = document.getElementById('close-search-btn');
+
+            searchIconBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                searchBoxContainer.classList.add('visible');
+                searchInput.focus();
+                playSound(openSound); // Search khulne par sound
+            });
+
+            closeSearchBtn.addEventListener('click', () => {
+                searchBoxContainer.classList.remove('visible');
+                playSound(closeSound); // Search band hone par sound
+            });
+            
+            // Yahan aapka baaki ka search code waisa hi rahega...
+            document.addEventListener('click', (event) => {
+                if (!searchBoxContainer.contains(event.target) && !searchIconBtn.contains(event.target)) {
+                    if (searchBoxContainer.classList.contains('visible')) {
+                        searchBoxContainer.classList.remove('visible');
+                        playSound(closeSound);
+                    }
+                }
+            });
+            searchBoxContainer.addEventListener('click', (event) => { event.stopPropagation(); });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && searchBoxContainer.classList.contains('visible')) {
+                    searchBoxContainer.classList.remove('visible');
+                    playSound(closeSound);
+                }
+            });
+            
+            // Filter logic
+            const allToolCards = document.querySelectorAll('.tool-card');
+            function filterToolCards(searchTerm) {
+                const term = searchTerm.toLowerCase().trim();
+                allToolCards.forEach(card => {
+                    const title = card.querySelector('h2').textContent.toLowerCase();
+                    const description = card.querySelector('p').textContent.toLowerCase();
+                    const shouldShow = title.includes(term) || description.includes(term);
+                    card.style.display = shouldShow ? 'flex' : 'none';
+                });
+            }
+            searchInput.addEventListener('input', () => { filterToolCards(searchInput.value); });
+
+
+            // --- 3. SHARE BUTTON LOGIC (SOUND ADDED) ---
+            const shareBtn = document.getElementById('share-btn');
+            shareBtn.addEventListener('click', async () => {
+                playSound(clickSound); // Click par sound
+                const shareData = {
+                    title: 'Magic Kit - Pro Tools Hub',
+                    text: 'Check out this awesome collection of free online tools!',
+                    url: window.location.href
+                };
+                if (navigator.share) {
+                    try { await navigator.share(shareData); } catch (err) { console.log('Error sharing:', err); }
+                } else {
+                    try {
+                        await navigator.clipboard.writeText(window.location.href);
+                        shareBtn.textContent = '✅ Link Copied!';
+                        setTimeout(() => { shareBtn.innerHTML = '🔗 Share with Friends'; }, 2000);
+                    } catch (err) { alert('Could not copy link.'); }
+                }
+            });
+
+            
+            // --- 4. NAVIGATION SOUND LOGIC ---
+            // Saare clickable links jinpar sound add karna hai
+            const clickableLinks = document.querySelectorAll('.tool-card, .logo-link, .footer-links a');
+
+            clickableLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    // Link ko turant jaane se rokte hain
+                    e.preventDefault(); 
+                    
+                    playSound(clickSound); // Click sound bajate hain
+
+                    // 150ms ke baad link par jaate hain
+                    setTimeout(() => {
+                        window.location.href = link.href;
+                    }, 150);
+                });
             });
         });
     </script>
