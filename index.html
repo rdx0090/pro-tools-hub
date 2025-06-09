@@ -3,11 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Tools Hub - Your Free Digital Toolkit</title>
+    <title>Magic Kit - Pro Tools Hub</title> <!-- Title bhi update kar diya -->
     <meta name="description" content="A collection of free, fast, and private online tools including an image compressor, image enhancer, QR code generator, and more.">
+    
+    <!-- Original Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- NAYA FONT "Magic Kit" ke liye -->
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --bg-color: #111827;
@@ -15,7 +21,7 @@
             --text-color: #e5e7eb;
             --text-secondary: #9ca3af;
             --accent-color: #3b82f6;
-            --accent-hover: #2563eb; /* Added for button hover */
+            --accent-hover: #2563eb; 
             --border-color: #374151;
         }
         body {
@@ -30,9 +36,55 @@
             max-width: 1200px;
             margin: 0 auto;
         }
+        
+        /* --- NAYE CHANGES SHURU --- */
+
+        /* Positioning ke liye ek naya wrapper */
+        .site-header {
+            position: relative;
+            margin-bottom: 48px;
+        }
+
+        /* 1. Naya Logo (Top Left) */
+        .logo-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 48px;
+            height: 48px;
+        }
+        .logo-svg {
+            width: 100%;
+            height: 100%;
+            fill: url(#logo-gradient); /* Gradient fill */
+            transition: transform 0.3s ease;
+        }
+        .logo-link:hover .logo-svg {
+            transform: rotate(-15deg) scale(1.1);
+        }
+
+        /* 2. Naya "Magic Kit" Title aur Font */
+        .magic-kit-title {
+            font-family: 'Sacramento', cursive;
+            font-size: 3rem;
+            font-weight: 500;
+            margin-bottom: -10px; /* Thoda sa upar Pro Tools Hub ke */
+            color: #c7d2fe;
+            animation: zoomEffect 4s ease-in-out infinite; /* Animation apply kiya */
+        }
+        
+        /* 3. Zoom In/Out Animation */
+        @keyframes zoomEffect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+
+        /* --- NAYE CHANGES KHATAM --- */
+
         header {
             text-align: center;
-            margin-bottom: 48px;
+            /* margin-bottom ko site-header mein daal diya hai */
         }
         header h1 {
             font-size: 2.8rem;
@@ -98,18 +150,17 @@
             font-size: 0.9rem;
         }
 
-        /* --- CSS FOR THE NEW SHARE BUTTON --- */
         .btn-share {
             background-color: var(--accent-color);
             color: white;
             padding: 12px 24px;
             border: none;
-            border-radius: 9999px; /* Makes it a pill-shaped button */
+            border-radius: 9999px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            margin-bottom: 24px; /* Space between button and copyright */
+            margin-bottom: 24px;
         }
 
         .btn-share:hover {
@@ -119,11 +170,34 @@
     </style>
 </head>
 <body>
+    <!-- Naya SVG gradient definition -->
+    <svg width="0" height="0" style="position:absolute">
+      <defs>
+        <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:var(--accent-color);stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+    </svg>
+
     <div class="container">
-        <header>
-            <h1>Pro Tools Hub</h1>
-            <p>Your one-stop collection of free, fast, and privacy-focused tools. All processing is done in your browser.</p>
-        </header>
+        <!-- Ek naya header wrapper banaya gaya hai -->
+        <div class="site-header">
+            <!-- Naya Logo yahan add kiya hai -->
+            <a href="index.html" class="logo-link" title="Back to Home">
+                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
+                </svg>
+            </a>
+
+            <header>
+                <!-- Naya "Magic Kit" title yahan add kiya hai -->
+                <h2 class="magic-kit-title">Magic Kit</h2>
+                
+                <h1>Pro Tools Hub</h1>
+                <p>Your one-stop collection of free, fast, and privacy-focused tools. All processing is done in your browser.</p>
+            </header>
+        </div>
 
         <main>
             <div class="tools-grid">
@@ -190,7 +264,7 @@
 
         shareBtn.addEventListener('click', async () => {
             const shareData = {
-                title: 'Pro Tools Hub',
+                title: 'Magic Kit - Pro Tools Hub',
                 text: 'Check out this awesome collection of free online tools!',
                 url: window.location.href // This will share the current page URL
             };
