@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magic Kit - Pro Tools Hub</title>
-    <meta name="description" content="A collection of free, fast, and private online tools including an image compressor, image enhancer, QR code generator, and more.">
+    
+    <!-- ============================================= -->
+    <!--  SEO CHANGES START HERE                       -->
+    <!-- ============================================= -->
+    
+    <title>MagicKit - Free Online AI, Image, and PDF Toolkit</title>
+    <meta name="description" content="MagicKit is your ultimate suite of free online tools. Use our AI Background Remover, Image Compressor, PDF converters, Password Generator, and more. Fast, private, and easy to use.">
+    <meta name="keywords" content="free tools, online tools, image compressor, background remover, ai tools, pdf converter, qr code generator, password generator, MagicKit, pro tools hub">
+    
+    <!-- ============================================= -->
+    <!--  SEO CHANGES END HERE                         -->
+    <!-- ============================================= -->
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,7 +163,7 @@
                         const title = card.querySelector('h2').textContent.toLowerCase();
                         const description = card.querySelector('p').textContent.toLowerCase();
                         const shouldShow = title.includes(searchTerm) || description.includes(searchTerm);
-                        
+
                         // Hide/Show logic
                         if (shouldShow) {
                             card.style.display = 'flex';
@@ -171,8 +181,8 @@
             if (shareBtn) {
                 shareBtn.addEventListener('click', async () => {
                     const shareData = {
-                        title: 'Magic Kit - Pro Tools Hub',
-                        text: 'Check out this awesome collection of free online tools!',
+                        title: 'Magic Kit - Free Online AI, Image, and PDF Toolkit',
+                        text: 'Check out this awesome collection of free online tools on MagicKit!',
                         url: window.location.href 
                     };
 
