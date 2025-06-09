@@ -404,7 +404,7 @@
                     setTimeout(() => {
                         shareBtn.innerHTML = '🔗 Share with Friends';
                     }, 2000);
-                } catch (err)
+                } catch (err) { // <<< YAHAN PAR Galti Thik ki Gayi Hai
                     console.error('Failed to copy link: ', err);
                     alert('Could not copy link. Please copy it manually.');
                 }
@@ -462,7 +462,6 @@
                                 description.includes(lowerCaseSearchTerm);
                 if (isMatch) {
                     card.classList.remove('hidden-by-search');
-                    card.style.display = 'flex';
                 } else {
                     card.classList.add('hidden-by-search');
                 }
