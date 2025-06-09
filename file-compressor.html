@@ -1,10 +1,20 @@
 <!DOCTYPE html>
-
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Compressor (ZIP) - MagicKit</title>
+
+    <!-- ============================================= -->
+    <!--  SEO CHANGES START HERE                       -->
+    <!-- ============================================= -->
+
+    <title>Online File Compressor - Create ZIP Archives for Free | MagicKit</title>
+    <meta name="description" content="Easily combine multiple files (documents, photos, videos) into a single ZIP archive with MagicKit's free online tool. No uploads, fast, and secure.">
+    <meta name="keywords" content="file compressor, zip file creator, create zip archive, online zip tool, file to zip, online archiver, combine files, MagicKit">
+
+    <!-- ============================================= -->
+    <!--  SEO CHANGES END HERE                         -->
+    <!-- ============================================= -->
 
     <!-- Library for creating ZIP files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -26,7 +36,6 @@
             --success-color: #10b981;
             --error-color: #ef4444;
         }
-
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
@@ -37,26 +46,21 @@
             flex-direction: column;
             align-items: center;
         }
-
         .container {
             width: 100%;
             max-width: 700px;
         }
-
         header {
             text-align: center;
             margin-bottom: 32px;
         }
-
         header h1 {
             font-size: 2.5rem;
         }
-
         header p {
             font-size: 1.125rem;
             color: var(--text-secondary);
         }
-
         .card {
             background-color: var(--card-color);
             border-radius: 12px;
@@ -64,7 +68,6 @@
             border: 1px solid var(--border-color);
             margin-bottom: 24px;
         }
-
         .btn-primary {
             background-color: var(--accent-color);
             color: white;
@@ -77,16 +80,13 @@
             transition: background-color 0.2s;
             width: 100%;
         }
-
         .btn-primary:hover {
             background-color: var(--accent-hover);
         }
-
         .btn-primary:disabled {
             background-color: #374151;
             cursor: not-allowed;
         }
-
         .drop-zone {
             border: 2px dashed var(--border-color);
             border-radius: 12px;
@@ -95,12 +95,10 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
-
         .drop-zone.drag-over {
             background-color: rgba(59, 130, 246, 0.1);
             border-color: var(--accent-color);
         }
-
         .file-list {
             list-style: none;
             padding: 0;
@@ -108,7 +106,6 @@
             max-height: 200px;
             overflow-y: auto;
         }
-
         .file-list li {
             display: flex;
             justify-content: space-between;
@@ -118,12 +115,9 @@
             border-radius: 6px;
             margin-bottom: 8px;
         }
-
         .file-list .file-size {
             color: var(--text-secondary);
         }
-
-        /* New Progress Bar Styles */
         .progress-bar-container {
             width: 100%;
             background-color: var(--border-color);
@@ -132,30 +126,24 @@
             margin-top: 16px;
             display: none; /* Hidden by default */
         }
-
         .progress-bar {
             width: 0%;
             height: 10px;
             background-color: var(--accent-color);
             transition: width 0.3s ease-in-out;
         }
-
         #status-area {
             margin-top: 8px;
             text-align: center;
             font-weight: 500;
             min-height: 20px;
         }
-
         .status-success {
             color: var(--success-color);
         }
-
         .status-error {
             color: var(--error-color);
         }
-
-        /* New Confetti Canvas Style */
         #confetti-canvas {
             position: fixed;
             top: 0;
@@ -165,26 +153,21 @@
             z-index: 9999;
             pointer-events: none; /* Allows clicks to go through */
         }
-
         footer {
             text-align: center;
             margin-top: 48px;
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
-
-        /* Size Selection Styles */
         .size-selection {
             margin-top: 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-
         .size-selection label {
             margin-right: 8px;
         }
-
         .size-selection input {
             width: 80px;
             padding: 8px;
@@ -195,7 +178,6 @@
             text-align: right;
         }
     </style>
-
 </head>
 <body>
 <!-- This canvas is for the confetti! -->
@@ -222,8 +204,6 @@
     </div>
 
     <div class="card" id="action-card" style="display:none;">
-
-        <!-- Target Size Selection -->
         <div class="size-selection">
             <label for="target-size">Target Size:</label>
             <input type="number" id="target-size" value="1" min="1">
@@ -232,7 +212,6 @@
                 <option value="mb" selected>MB</option>
             </select>
         </div>
-
         <button id="compress-btn" class="btn-primary">Create & Download ZIP</button>
         <div class="progress-bar-container">
             <div class="progress-bar"></div>
@@ -258,32 +237,21 @@
     const statusArea = document.getElementById('status-area');
     const progressBarContainer = document.querySelector('.progress-bar-container');
     const progressBar = document.querySelector('.progress-bar');
-    const targetSizeInput = document.getElementById('target-size'); // NEW
-    const sizeUnitSelect = document.getElementById('size-unit');     // NEW
+    const targetSizeInput = document.getElementById('target-size');
+    const sizeUnitSelect = document.getElementById('size-unit');
 
     let filesToZip = [];
 
-    // Setup Confetti
     const myConfetti = confetti.create(document.getElementById('confetti-canvas'), {
         resize: true,
         useWorker: true
     });
 
-    // Event Listeners
     browseBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', (e) => handleFileSelection(e.target.files));
-
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('drag-over');
-    });
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-        handleFileSelection(e.dataTransfer.files);
-    });
-
+    dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFileSelection(e.dataTransfer.files); });
     compressBtn.addEventListener('click', createZip);
 
     function handleFileSelection(files) {
@@ -314,39 +282,27 @@
     async function createZip() {
         if (filesToZip.length === 0) return;
 
-        // --- Get Target Size from Input ---
         const targetSizeValue = parseFloat(targetSizeInput.value);
         const targetUnit = sizeUnitSelect.value;
         let targetSizeBytes = targetSizeValue;
+        if (targetUnit === 'kb') { targetSizeBytes *= 1024; }
+        else if (targetUnit === 'mb') { targetSizeBytes *= 1024 * 1024; }
 
-        if (targetUnit === 'kb') {
-            targetSizeBytes = targetSizeValue * 1024; // Convert KB to bytes
-        } else if (targetUnit === 'mb') {
-            targetSizeBytes = targetSizeValue * 1024 * 1024; // Convert MB to bytes
-        }
-
-        // --- UI Update on Start ---
         updateStatus('Starting compression...');
         compressBtn.disabled = true;
         compressBtn.textContent = 'Processing...';
         progressBarContainer.style.display = 'block';
         progressBar.style.width = '0%';
 
-        const startTime = performance.now(); // Start timer
+        const startTime = performance.now();
 
         try {
             const zip = new JSZip();
-            filesToZip.forEach(file => {
-                zip.file(file.name, file);
-            });
+            filesToZip.forEach(file => { zip.file(file.name, file); });
 
-            // Determine Compression Level Based on Target Size (Example)
-            let compressionLevel = 9; // Default: Best compression
-            if (targetSizeBytes > 5 * 1024 * 1024) { // If target is > 5MB, reduce compression
-                compressionLevel = 6;  // Medium compression
-            } else if (targetSizeBytes > 10 * 1024 * 1024) { // If target is > 10MB, reduce further
-                compressionLevel = 3;  // Fast compression
-            }
+            let compressionLevel = 9;
+            if (targetSizeBytes > 5 * 1024 * 1024) { compressionLevel = 6; }
+            else if (targetSizeBytes > 10 * 1024 * 1024) { compressionLevel = 3; }
 
             const zipBlob = await zip.generateAsync({
                 type: "blob",
@@ -354,38 +310,29 @@
                 compressionOptions: { level: compressionLevel },
                 streamFiles: true
             }, (metadata) => {
-                // --- This function is called during zipping (Progress Update) ---
                 const percent = metadata.percent.toFixed(0);
                 progressBar.style.width = `${percent}%`;
                 updateStatus(`Compressing... ${percent}%`);
             });
 
-            const endTime = performance.now(); // End timer
-            const duration = ((endTime - startTime) / 1000).toFixed(2); // Calculate seconds
+            const endTime = performance.now();
+            const duration = ((endTime - startTime) / 1000).toFixed(2);
 
-            // --- Check if Splitting is Necessary (Illustrative) ---
             if (zipBlob.size > targetSizeBytes) {
-                console.warn("ZIP size exceeds target. Splitting not implemented in this example.");
-                updateStatus(`ZIP size exceeds target (${formatBytes(zipBlob.size)} > ${formatBytes(targetSizeBytes)}).  Splitting is not implemented in this example.`);
+                updateStatus(`Warning: ZIP size (${formatBytes(zipBlob.size)}) exceeds target. Splitting not implemented.`);
             }
 
-            // --- UI Update on Success ---
-            triggerDownload(zipBlob, 'pro-tools-hub-files.zip');
+            triggerDownload(zipBlob, 'magickit-files.zip');
             updateStatus(`Success! ZIP created in ${duration}s (${formatBytes(zipBlob.size)}).`, 'success');
             fireConfetti();
 
         } catch (error) {
             console.error("Error creating ZIP:", error);
-            // --- UI Update on Error ---
             updateStatus('An error occurred. Please try again.', 'error');
         } finally {
-            // --- UI Reset ---
             compressBtn.disabled = false;
             compressBtn.textContent = 'Create & Download ZIP';
-            // Hide progress bar after a short delay
-            setTimeout(() => {
-                progressBarContainer.style.display = 'none';
-            }, 2000);
+            setTimeout(() => { progressBarContainer.style.display = 'none'; }, 2000);
         }
     }
 
@@ -400,20 +347,13 @@
 
     function updateStatus(message, type = '') {
         statusArea.textContent = message;
-        statusArea.className = ''; // Reset class
-        if (type === 'success') {
-            statusArea.classList.add('status-success');
-        } else if (type === 'error') {
-            statusArea.classList.add('status-error');
-        }
+        statusArea.className = '';
+        if (type === 'success') { statusArea.classList.add('status-success'); }
+        else if (type === 'error') { statusArea.classList.add('status-error'); }
     }
 
     function fireConfetti() {
-        myConfetti({
-            particleCount: 150,
-            spread: 90,
-            origin: { y: 0.6 }
-        });
+        myConfetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
     }
 
     function formatBytes(bytes, decimals = 2) {
