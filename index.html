@@ -326,41 +326,50 @@
     <!-- ====================================================================== -->
     <!-- JAVASCRIPT SECTION (SOUND ADDED) -->
     <!-- ====================================================================== -->
+        <!-- ====================================================================== -->
+    <!-- JAVASCRIPT SECTION (SOUND FIXED) -->
+    <!-- ====================================================================== -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- 1. SOUND SETUP ---
-            // Hum 3 alag sound effects banayenge
-            const clickSound = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_2b28b8a82b.mp3'); // General click
-            const openSound = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_14856f2b7f.mp3');  // For opening things
-            const closeSound = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_e08283350a.mp3'); // For closing things
+            // Sound effects ko pehle se taiyaar rakhte hain.
+            const clickSound = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_2b28b8a82b.mp3');
+            const openSound = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_14856f2b7f.mp3');
+            const closeSound = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_e08283350a.mp3');
 
-            // Ek function jo sound ko aaram se bajayega
+            // Ek function jo aawaz ko halka karke bajata hai.
             function playSound(sound) {
-                sound.volume = 0.4; // Aawaz ko halka rakhte hain
-                sound.currentTime = 0; // Rewind to start
-                sound.play();
+                sound.volume = 0.4;
+                sound.currentTime = 0;
+                sound.play().catch(error => console.log("Sound play was prevented by browser."));
             }
-            
-            // --- 2. SEARCH LOGIC (SOUND ADDED) ---
+
+            // --- 2. ELEMENTS KO SELECT KARTE HAIN ---
+            // Saare zaroori elements ko yahan ek saath le aate hain.
             const searchIconBtn = document.querySelector('.search-btn-icon');
             const searchBoxContainer = document.getElementById('search-box-container');
             const searchInput = document.getElementById('search-input');
             const closeSearchBtn = document.getElementById('close-search-btn');
+            const shareBtn = document.getElementById('share-btn');
+            const allToolCards = document.querySelectorAll('.tool-card');
+            const logoLink = document.querySelector('.logo-link');
+            const footerLinks = document.querySelectorAll('.footer-links a');
 
+            // --- 3. SEARCH LOGIC (SOUND ADDED) ---
             searchIconBtn.addEventListener('click', (event) => {
                 event.stopPropagation();
                 searchBoxContainer.classList.add('visible');
                 searchInput.focus();
-                playSound(openSound); // Search khulne par sound
+                playSound(openSound);
             });
 
             closeSearchBtn.addEventListener('click', () => {
                 searchBoxContainer.classList.remove('visible');
-                playSound(closeSound); // Search band hone par sound
+                playSound(closeSound);
             });
             
-            // Yahan aapka baaki ka search code waisa hi rahega...
+            // Baaki ka search logic...
             document.addEventListener('click', (event) => {
                 if (!searchBoxContainer.contains(event.target) && !searchIconBtn.contains(event.target)) {
                     if (searchBoxContainer.classList.contains('visible')) {
@@ -376,9 +385,8 @@
                     playSound(closeSound);
                 }
             });
-            
+
             // Filter logic
-            const allToolCards = document.querySelectorAll('.tool-card');
             function filterToolCards(searchTerm) {
                 const term = searchTerm.toLowerCase().trim();
                 allToolCards.forEach(card => {
@@ -390,18 +398,16 @@
             }
             searchInput.addEventListener('input', () => { filterToolCards(searchInput.value); });
 
-
-            // --- 3. SHARE BUTTON LOGIC (SOUND ADDED) ---
-            const shareBtn = document.getElementById('share-btn');
+            // --- 4. SHARE BUTTON LOGIC (SOUND ADDED) ---
             shareBtn.addEventListener('click', async () => {
-                playSound(clickSound); // Click par sound
+                playSound(clickSound); // Yeh navigate nahi karta, isliye yahan sound theek hai.
                 const shareData = {
                     title: 'Magic Kit - Pro Tools Hub',
                     text: 'Check out this awesome collection of free online tools!',
                     url: window.location.href
                 };
                 if (navigator.share) {
-                    try { await navigator.share(shareData); } catch (err) { console.log('Error sharing:', err); }
+                    try { await navigator.share(shareData); } catch (err) { /* silent fail */ }
                 } else {
                     try {
                         await navigator.clipboard.writeText(window.location.href);
@@ -411,22 +417,15 @@
                 }
             });
 
+            // --- 5. NAVIGATION SOUND LOGIC (YEH HAI NAYA, SAHI TAREEEKA) ---
+            // Un sabhi links par sound add karte hain jo doosre page par le jaate hain.
+            const navigationalLinks = [...allToolCards, logoLink, ...footerLinks];
             
-            // --- 4. NAVIGATION SOUND LOGIC ---
-            // Saare clickable links jinpar sound add karna hai
-            const clickableLinks = document.querySelectorAll('.tool-card, .logo-link, .footer-links a');
-
-            clickableLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    // Link ko turant jaane se rokte hain
-                    e.preventDefault(); 
-                    
-                    playSound(clickSound); // Click sound bajate hain
-
-                    // 150ms ke baad link par jaate hain
-                    setTimeout(() => {
-                        window.location.href = link.href;
-                    }, 150);
+            navigationalLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    // Hum navigation ko nahi rokenge. Bas sound bajayenge.
+                    // Browser sound bajana shuru karega aur saath hi naye page par jaana bhi.
+                    playSound(clickSound);
                 });
             });
         });
