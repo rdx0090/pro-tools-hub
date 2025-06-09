@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Magic Kit - Pro Tools Hub</title> <!-- Title bhi update kar diya -->
     <meta name="description" content="A collection of free, fast, and private online tools including an image compressor, image enhancer, QR code generator, and more.">
-    
+
     <!-- Original Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- NAYA FONT "Magic Kit" ke liye -->
     <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
 
@@ -36,16 +36,12 @@
             max-width: 1200px;
             margin: 0 auto;
         }
-        
-        /* --- NAYE CHANGES SHURU --- */
 
-        /* Positioning ke liye ek naya wrapper */
+        /* --- AAPKA PURANA CODE JAISE KA TAISA --- */
         .site-header {
             position: relative;
             margin-bottom: 48px;
         }
-
-        /* 1. Naya Logo (Top Left) */
         .logo-link {
             position: absolute;
             top: 0;
@@ -62,8 +58,6 @@
         .logo-link:hover .logo-svg {
             transform: rotate(-15deg) scale(1.1);
         }
-
-        /* 2. Naya "Magic Kit" Title aur Font */
         .magic-kit-title {
             font-family: 'Sacramento', cursive;
             font-size: 3rem;
@@ -72,19 +66,13 @@
             color: #c7d2fe;
             animation: zoomEffect 4s ease-in-out infinite; /* Animation apply kiya */
         }
-        
-        /* 3. Zoom In/Out Animation */
         @keyframes zoomEffect {
             0% { transform: scale(1); }
             50% { transform: scale(1.08); }
             100% { transform: scale(1); }
         }
-
-        /* --- NAYE CHANGES KHATAM --- */
-
         header {
             text-align: center;
-            /* margin-bottom ko site-header mein daal diya hai */
         }
         header h1 {
             font-size: 2.8rem;
@@ -149,7 +137,6 @@
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
-
         .btn-share {
             background-color: var(--accent-color);
             color: white;
@@ -162,15 +149,27 @@
             transition: all 0.2s;
             margin-bottom: 24px;
         }
-
         .btn-share:hover {
             background-color: var(--accent-hover);
             transform: scale(1.05);
         }
+        
+        /* --- NAYA CSS FOOTER LINKS KE LIYE --- */
+        .footer-links {
+            margin-bottom: 24px;
+        }
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin: 0 12px;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover {
+            color: var(--accent-color);
+        }
     </style>
 </head>
 <body>
-    <!-- Naya SVG gradient definition -->
     <svg width="0" height="0" style="position:absolute">
       <defs>
         <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -181,19 +180,14 @@
     </svg>
 
     <div class="container">
-        <!-- Ek naya header wrapper banaya gaya hai -->
         <div class="site-header">
-            <!-- Naya Logo yahan add kiya hai -->
             <a href="index.html" class="logo-link" title="Back to Home">
                 <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.T5 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
                 </svg>
             </a>
-
             <header>
-                <!-- Naya "Magic Kit" title yahan add kiya hai -->
                 <h2 class="magic-kit-title">Magic Kit</h2>
-                
                 <h1>Pro Tools Hub</h1>
                 <p>Your one-stop collection of free, fast, and privacy-focused tools. All processing is done in your browser.</p>
             </header>
@@ -201,64 +195,73 @@
 
         <main>
             <div class="tools-grid">
-                <!-- 1st Tool: Background Remover -->
+                <!-- Aapke Purane 6 Tools -->
                 <a href="background-remover.html" class="tool-card">
                     <div class="icon">✂️</div>
                     <h2>Background Remover</h2>
                     <p>Automatically remove the background from any image using AI.</p>
                     <span class="tag" style="background-color: #f59e0b;">Pro</span>
                 </a>
-
-                <!-- 2nd Tool: Image Compressor -->
                 <a href="image-compressor.html" class="tool-card">
                     <div class="icon">🗜️</div>
                     <h2>Image Compressor</h2>
                     <p>Reduce the file size of your images in bulk without losing quality.</p>
                     <span class="tag">Popular</span>
                 </a>
-
-                <!-- 3rd Tool: Image Enhancer -->
                 <a href="image-enhancer.html" class="tool-card">
                     <div class="icon">✨</div>
                     <h2>Image Enhancer</h2>
                     <p>Apply filters like brightness, contrast, and saturation to your photos.</p>
                     <span class="tag">New</span>
                 </a>
-
-                <!-- 4th Tool: QR Code Generator -->
                 <a href="qr-code-generator.html" class="tool-card"> 
                     <div class="icon">📱</div>
                     <h2>QR Code Generator</h2>
                     <p>Create QR codes for URLs, text, Wi-Fi, and more instantly.</p>
                 </a>
-
-                <!-- 5th Tool: Excel to PDF -->
                 <a href="excel-to-pdf.html" class="tool-card"> 
                     <div class="icon">📄</div>
                     <h2>Excel to PDF</h2>
                     <p>Convert your Excel spreadsheets (.xlsx) into PDF documents online.</p>
                 </a>
-
-                <!-- 6th Tool: File Compressor (ZIP) -->
                 <a href="file-compressor.html" class="tool-card">
                     <div class="icon">📁</div>
                     <h2>File Compressor (ZIP)</h2>
                     <p>Combine multiple files (docs, images, etc.) into a single, smaller ZIP file.</p>
                     <span class="tag">New</span>
                 </a>
+                
+                <!-- NAYE TOOLS YAHAN ADD KIYE HAIN -->
+                <a href="image-to-text.html" class="tool-card">
+                    <div class="icon">✒️</div>
+                    <h2>Image to Text (OCR)</h2>
+                    <p>Extract editable text from any image or screenshot instantly.</p>
+                    <span class="tag" style="background-color: #ef4444;">Magic</span>
+                </a>
+                <a href="password-generator.html" class="tool-card">
+                    <div class="icon">🛡️</div>
+                    <h2>Password Generator</h2>
+                    <p>Create strong, secure, and random passwords to protect your accounts.</p>
+                </a>
             </div>
         </main>
 
         <footer>
-            <!-- The new Share Button is here -->
+            <!-- NAYE LINKS YAHAN ADD KIYE HAIN -->
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="about.html">About Us</a>
+            </div>
+        
+            <!-- Aapka Purana Share Button -->
             <button id="share-btn" class="btn-share">🔗 Share with Friends</button>
 
-            <!-- Your copyright text -->
+            <!-- Aapka Purana Copyright Text -->
             <p style="margin-top: 16px;">© 2025 All rights reserved - MagicKit</p>
         </footer>
     </div>
 
-    <!-- The JavaScript logic for the Share Button -->
+    <!-- Aapka Purana Share Button ka JavaScript -->
     <script>
         const shareBtn = document.getElementById('share-btn');
 
@@ -266,10 +269,8 @@
             const shareData = {
                 title: 'Magic Kit - Pro Tools Hub',
                 text: 'Check out this awesome collection of free online tools!',
-                url: window.location.href // This will share the current page URL
+                url: window.location.href
             };
-
-            // Check if the Web Share API is available (for mobile)
             if (navigator.share) {
                 try {
                     await navigator.share(shareData);
@@ -277,14 +278,12 @@
                     console.log('Error sharing:', err);
                 }
             } else {
-                // Fallback for desktop or unsupported browsers: Copy to clipboard
                 try {
                     await navigator.clipboard.writeText(window.location.href);
-                    // Give user feedback
                     shareBtn.textContent = '✅ Link Copied!';
                     setTimeout(() => {
                         shareBtn.innerHTML = '🔗 Share with Friends';
-                    }, 2000); // Reset text after 2 seconds
+                    }, 2000);
                 } catch (err) {
                     console.error('Failed to copy link: ', err);
                     alert('Could not copy link. Please copy it manually.');
