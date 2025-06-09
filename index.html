@@ -123,41 +123,47 @@
     </div>
 
     <!-- ====================================================================== -->
-    <!-- JAVASCRIPT SECTION (SOUND 100% FIXED) -->
+    <!-- FINAL, BULLETPROOF JAVASCRIPT FOR SOUND -->
     <!-- ====================================================================== -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- 1. SOUND SETUP (The "First Touch" Technique) ---
-            let clickSound, openSound, closeSound;
-            let soundsInitialized = false;
+            // --- 1. SOUND SETUP ---
+            let sounds = {}; // Ek khaali object jismein hum apne sounds rakhenge.
+            let audioUnlocked = false; // Shuru mein audio locked hai.
 
-            // Yeh function sirf pehli baar user ke touch karne par chalega.
-            function initializeSounds() {
-                if (soundsInitialized) return; // Agar pehle se load ho chuke hain to kuch na karein.
+            // Yeh function sirf pehli baar user ke interaction par chalega.
+            function unlockAudio() {
+                if (audioUnlocked) return; // Agar unlock ho chuka hai, to dobara na chalayein.
                 
-                clickSound = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_2b28b8a82b.mp3');
-                openSound = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_14856f2b7f.mp3');
-                closeSound = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_e08283350a.mp3');
+                // Hum ab saare sounds ko load karte hain.
+                sounds.click = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_2b28b8a82b.mp3');
+                sounds.open = new Audio('https://cdn.pixabay.com/audio/2021/08/04/audio_14856f2b7f.mp3');
+                sounds.close = new Audio('https://cdn.pixabay.com/audio/2022/03/10/audio_e08283350a.mp3');
                 
-                // Sabhi sounds ki aawaz ko halka rakhte hain.
-                clickSound.volume = 0.4;
-                openSound.volume = 0.4;
-                closeSound.volume = 0.4;
+                // Ek chhota sa "trick" browser ko audio play karne ke liye taiyaar karne ka.
+                Object.values(sounds).forEach(sound => {
+                    sound.volume = 0;
+                    sound.play().catch(e => {}); // Error ko ignore karein
+                    sound.pause();
+                    sound.currentTime = 0;
+                    sound.volume = 0.4; // Ab asli volume set karein.
+                });
 
-                soundsInitialized = true;
-                // Pehli baar touch karne par event listener ko hata dete hain.
-                document.body.removeEventListener('touchstart', initializeSounds);
+                audioUnlocked = true;
+                // Ab is listener ki zaroorat nahi, isse hata dein.
+                document.body.removeEventListener('click', unlockAudio);
+                document.body.removeEventListener('touchstart', unlockAudio);
             }
 
-            // Hum user ke pehle touch ka intezaar karte hain.
-            document.body.addEventListener('touchstart', initializeSounds, { once: true });
-
-            // Ek function jo check karega ki sound load hua ya nahi, fir bajayega.
-            function playSound(sound) {
-                if (soundsInitialized && sound) {
-                    sound.currentTime = 0;
-                    sound.play();
+            // Hum user ke pehle click ya touch ka intezaar karte hain.
+            document.body.addEventListener('click', unlockAudio);
+    
+            // Ek function jo check karke sound bajayega.
+            function playSound(soundName) {
+                if (audioUnlocked && sounds[soundName]) {
+                    sounds[soundName].currentTime = 0;
+                    sounds[soundName].play();
                 }
             }
             
@@ -167,22 +173,42 @@
             const searchInput = document.getElementById('search-input');
             const closeSearchBtn = document.getElementById('close-search-btn');
             const shareBtn = document.getElementById('share-btn');
-            const navigationalLinks = document.querySelectorAll('.tool-card, .logo-link, .footer-links a');
+            const allClickableElements = document.querySelectorAll('.tool-card, .logo-link, .footer-links a, .search-btn-icon, #close-search-btn, .btn-share');
 
-            // --- 3. SEARCH LOGIC (SOUND ADDED) ---
+            // --- 3. SABHI CLICKS PAR SOUND LAGATE HAIN ---
+            allClickableElements.forEach(element => {
+                element.addEventListener('click', (e) => {
+                    // Yahan check karte hain ki kaun sa sound bajana hai.
+                    if (element.matches('.search-btn-icon')) {
+                        playSound('open');
+                    } else if (element.matches('#close-search-btn')) {
+                        playSound('close');
+                    } else {
+                        playSound('click');
+                    }
+                    
+                    // Agar element ek link hai, to usko thoda delay ke baad follow karte hain.
+                    if (element.tagName === 'A' && element.href) {
+                        e.preventDefault();
+                        setTimeout(() => {
+                            window.location.href = element.href;
+                        }, 150);
+                    }
+                });
+            });
+
+            // --- 4. SEARCH LOGIC (Sirf functionality, sound upar handle ho gaya) ---
             searchIconBtn.addEventListener('click', (event) => {
                 event.stopPropagation();
                 searchBoxContainer.classList.add('visible');
                 searchInput.focus();
-                playSound(openSound);
             });
 
             closeSearchBtn.addEventListener('click', () => {
                 searchBoxContainer.classList.remove('visible');
-                playSound(closeSound);
             });
             
-            // Filter logic (aapka purana code bilkul sahi hai)
+            // Filter logic...
             const allToolCards = document.querySelectorAll('.tool-card');
             function filterToolCards(searchTerm) {
                 const term = searchTerm.toLowerCase().trim();
@@ -195,24 +221,14 @@
             }
             searchInput.addEventListener('input', () => { filterToolCards(searchInput.value); });
 
-
-            // --- 4. SHARE BUTTON LOGIC (SOUND ADDED) ---
+            // --- 5. SHARE BUTTON LOGIC (Sirf functionality, sound upar handle ho gaya) ---
             shareBtn.addEventListener('click', async () => {
-                playSound(clickSound);
-                // ... (Aapka share ka baaki ka code yahan aayega) ...
-            });
-
-            // --- 5. NAVIGATION SOUND LOGIC ---
-            navigationalLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    // Hum navigation ko rok kar, sound bajakar, fir bhejenge.
-                    // Yeh experience behtar deta hai.
-                    e.preventDefault();
-                    playSound(clickSound);
-                    setTimeout(() => {
-                        window.location.href = link.href;
-                    }, 150); // 150ms ka chota sa delay
-                });
+                const shareData = {
+                    title: 'Magic Kit - Pro Tools Hub',
+                    text: 'Check out this awesome collection of free online tools!',
+                    url: window.location.href
+                };
+                //... baaki ka share code
             });
         });
     </script>
