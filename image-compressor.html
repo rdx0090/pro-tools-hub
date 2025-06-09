@@ -3,7 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Compressor - Pro Tools Hub</title>
+    
+    <!-- ============================================= -->
+    <!--  SEO CHANGES START HERE                       -->
+    <!-- ============================================= -->
+
+    <title>Bulk Image Compressor - Compress JPEG, PNG & WEBP Online | MagicKit</title>
+    <meta name="description" content="Compress multiple images at once with MagicKit's free online tool. Reduce the file size of JPEG, PNG, and WEBP files with quality presets. Fast, private, and client-side processing.">
+    <meta name="keywords" content="image compressor, bulk image compressor, compress images, reduce image size, photo compressor, image optimizer, jpeg compressor, png compressor, webp compressor, MagicKit">
+
+    <!-- ============================================= -->
+    <!--  SEO CHANGES END HERE                         -->
+    <!-- ============================================= -->
 
     <!-- External Libraries (Same) -->
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
@@ -82,7 +93,7 @@
                                 <p>Recommended. Resizes to 1920px. Great for speed.</p>
                             </div>
                         </label>
-                        
+
                         <input type="radio" id="preset-quality" name="preset" value="2560">
                         <label for="preset-quality">
                              <div class="preset-info">
@@ -120,7 +131,7 @@
             <p id="total-savings" style="color:var(--text-secondary); font-size: 1.1rem; font-weight: 500;"></p>
             <div id="image-list" class="image-list"></div>
         </div>
-        
+
         <footer>
             <p><a href="index.html" style="color: var(--accent-color);">← Back to Hub</a></p>
             <p>© 2025 All rights reserved - Magic Kit</p>
@@ -137,7 +148,7 @@
         const imageList = document.getElementById('image-list');
         const totalSavingsEl = document.getElementById('total-savings');
         const downloadAllBtn = document.getElementById('download-all-btn');
-        
+
         let filesToProcess = [];
         let compressedFilesData = [];
 
@@ -166,10 +177,10 @@
             if (filesToProcess.length === 0) return;
             setupUIForCompression();
             const startTime = performance.now();
-            
+
             const compressionPromises = filesToProcess.map((file, index) => compressSingleImage(file, index));
             await Promise.all(compressionPromises);
-            
+
             finishCompression(startTime);
         }
 
@@ -188,9 +199,9 @@
                         statusText.textContent = `Compressing... ${Math.round(progress)}%`;
                     },
                 };
-                
+
                 const compressedResult = await imageCompression(file, options);
-                
+
                 compressedFilesData.push({ name: compressedResult.name, file: compressedResult, originalSize: file.size });
                 updateImageCard(imageCard, file, compressedResult);
 
@@ -217,7 +228,7 @@
         function finishCompression(startTime) {
             const endTime = performance.now();
             const duration = (endTime - startTime) / 1000;
-            
+
             let totalOriginalSize = 0, totalCompressedSize = 0;
             compressedFilesData.forEach(f => {
                 totalOriginalSize += f.originalSize;
@@ -237,7 +248,7 @@
                 }());
             }
         }
-        
+
         function createImageCard(file, index) {
             const card = document.createElement('div');
             card.className = 'image-card';
@@ -259,10 +270,10 @@
         // --- NAYA --- Yahan Individual Download button add kiya gaya hai
         function updateImageCard(card, originalFile, compressedFile) {
             const savingPercent = ((originalFile.size - compressedFile.size) / originalFile.size * 100).toFixed(1);
-            
+
             card.querySelector('.size-info').innerHTML = `<span class="original">${formatBytes(originalFile.size)}</span><span class="arrow"> → </span><span class="new">${formatBytes(compressedFile.size)}</span><span class="saving">(${savingPercent}% off)</span>`;
             card.querySelector('.status-text').innerHTML = `<span style="color: var(--success-color);">Completed</span>`;
-            
+
             // Loader ko hata kar download button lagayein
             const loaderWrapper = card.querySelector('.loader-wrapper');
             loaderWrapper.innerHTML = ''; // Clear the loader
@@ -282,7 +293,7 @@
             card.querySelector('.loader-wrapper').remove();
             card.querySelector('.status-text').innerHTML = `<span style="color: var(--error-color);">${message}</span>`;
         }
-        
+
         function updateTotalSavings(original, compressed, duration) { if (original === 0) { totalSavingsEl.textContent = ''; return; } const totalSavingPercent = ((original - compressed) / original * 100).toFixed(1); totalSavingsEl.innerHTML = `Total Savings: <span style="color:var(--success-color)">${formatBytes(original - compressed)} (${totalSavingPercent}%)</span> | Time: ${duration.toFixed(2)}s`; }
         async function downloadAllAsZip() { if (compressedFilesData.length === 0) return; const zip = new JSZip(); compressedFilesData.forEach(item => zip.file(item.name, item.file)); downloadAllBtn.textContent = 'Zipping...'; downloadAllBtn.disabled = true; const zipBlob = await zip.generateAsync({type:"blob"}); const link = document.createElement('a'); link.href = URL.createObjectURL(zipBlob); link.download = 'pro-compressed-images.zip'; link.click(); URL.revokeObjectURL(link.href); downloadAllBtn.textContent = 'Download All as ZIP'; downloadAllBtn.disabled = false; }
         function formatBytes(bytes, decimals = 2) { if (bytes === 0) return '0 Bytes'; const k = 1024; const sizes = ['Bytes', 'KB', 'MB', 'GB']; const i = Math.floor(Math.log(bytes) / Math.log(k)); return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i]; }
