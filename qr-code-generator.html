@@ -3,7 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Generator - Pro Tools Hub</title>
+    
+    <!-- ============================================= -->
+    <!--  SEO CHANGES START HERE                       -->
+    <!-- ============================================= -->
+    
+    <title>Free QR Code Generator - Create QR Codes for URL, Text & Wi-Fi | MagicKit</title>
+    <meta name="description" content="Instantly generate custom QR codes for URLs, text, Wi-Fi, and more with MagicKit's free online tool. Easy to use, fast, and downloadable as a PNG.">
+    <meta name="keywords" content="qr code generator, free qr code generator, qr code maker, generate qr code, url to qr code, text to qr code, online qr tool, MagicKit">
+
+    <!-- ============================================= -->
+    <!--  SEO CHANGES END HERE                         -->
+    <!-- ============================================= -->
+
     <!-- Library for generating QR Codes -->
     <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
 
@@ -40,15 +52,14 @@
         /* Fix: QR Code library by default hides the canvas, we need it for download */
         #qrcode-container canvas { display: block !important; }
         #qrcode-container img { display: none !important; } /* We will use canvas instead */
-        
+
         .btn-secondary {
             background-color: var(--border-color); color: var(--text-color); padding: 10px 20px;
             border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 500; cursor: pointer;
             transition: background-color 0.2s; margin-top: 16px; width: 100%; display: none;
         }
         footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
-        
-        /* Naya: Generation Status ke liye Style */
+
         #status-text {
             color: var(--text-secondary);
             font-size: 0.9rem;
@@ -57,7 +68,6 @@
             height: 20px;
         }
 
-        /* Naya: Confetti/Firecracker Animation ke liye CSS */
         #confetti-container {
             position: absolute;
             top: 0;
@@ -102,10 +112,9 @@
 
         <div class="card" id="result-card" style="display: none;">
             <div id="qrcode-container">
-                <!-- Naya: Confetti container -->
                 <div id="confetti-container"></div>
             </div>
-            <p id="status-text"></p> <!-- Naya: Status Text ke liye Element -->
+            <p id="status-text"></p>
             <button id="download-btn" class="btn-secondary">Download PNG</button>
         </div>
 
@@ -121,8 +130,8 @@
         const qrTextInput = document.getElementById('qr-text');
         const qrContainer = document.getElementById('qrcode-container');
         const resultCard = document.getElementById('result-card');
-        const statusText = document.getElementById('status-text'); // Naya
-        const confettiContainer = document.getElementById('confetti-container'); // Naya
+        const statusText = document.getElementById('status-text');
+        const confettiContainer = document.getElementById('confetti-container');
 
         generateBtn.addEventListener('click', () => {
             const text = qrTextInput.value.trim();
@@ -131,11 +140,9 @@
                 return;
             }
 
-            // Naya: Start time record karein
             const startTime = performance.now();
+            qrContainer.innerHTML = '<div id="confetti-container"></div>'; 
 
-            qrContainer.innerHTML = '<div id="confetti-container"></div>'; // Clear and re-add confetti container
-            
             new QRCode(qrContainer, {
                 text: text,
                 width: 256,
@@ -144,40 +151,33 @@
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
             });
-            
-            // Naya: End time record karein aur duration dikhayein
+
             const endTime = performance.now();
             const duration = Math.round(endTime - startTime);
             statusText.textContent = `🎉 Generated in ${duration} ms!`;
 
             resultCard.style.display = 'block';
             downloadBtn.style.display = 'block';
-            
-            // Naya: Confetti/Firecracker animation chalaayein
             showConfetti();
         });
 
-        // Theek kiya hua Download Function
         downloadBtn.addEventListener('click', () => {
-            // Hum image ke bajaye canvas ko dhoondenge
             const canvasEl = qrContainer.querySelector('canvas');
             if (canvasEl) {
                 const link = document.createElement('a');
                 link.download = 'qrcode.png';
-                // Canvas se data URL lena zyada reliable hai
                 link.href = canvasEl.toDataURL('image/png');
                 link.click();
             } else {
                 alert("Could not find QR code to download. Please generate it again.");
             }
         });
-        
-        // Naya: Confetti/Firecracker Function
+
         function showConfetti() {
             const currentConfettiContainer = document.getElementById('confetti-container');
-            currentConfettiContainer.innerHTML = ''; // Clear old confetti
+            currentConfettiContainer.innerHTML = ''; 
             const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107', '#ff9800'];
-            
+
             for (let i = 0; i < 100; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
@@ -187,8 +187,6 @@
                 confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
                 currentConfettiContainer.appendChild(confetti);
             }
-            
-            // 3 second baad confetti saaf kar dein
             setTimeout(() => {
                 currentConfettiContainer.innerHTML = '';
             }, 3000);
