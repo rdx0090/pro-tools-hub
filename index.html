@@ -8,8 +8,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
+    <!-- Combined Inter and Pacifico font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -56,7 +56,7 @@
             transform: rotate(-15deg) scale(1.1);
         }
 
-        .search-icon-wrapper { /* Visual search icon button */
+        .search-icon-wrapper {
             position: absolute;
             top: 0;
             right: 0;
@@ -150,13 +150,14 @@
             position: relative; 
             z-index: 1;
         }
+        /* UPDATED FONT FOR MAGIC KIT */
         .magic-kit-title {
-            font-family: 'Sacramento', cursive;
-            font-size: 3rem;
-            font-weight: 500;
-            margin-bottom: -10px;
+            font-family: 'Pacifico', cursive; /* NAYA FONT */
+            font-size: 3.2rem; /* Thoda sa bada kiya, adjust if needed */
+            font-weight: 400; /* Pacifico is usually 400 weight */
+            margin-bottom: -10px; 
             color: #c7d2fe;
-            animation: zoomEffect 4s ease-in-out infinite;
+            animation: zoomEffect 4s ease-in-out infinite; /* Animation pehle se hi hai */
         }
         @keyframes zoomEffect {
             0% { transform: scale(1); }
@@ -190,8 +191,8 @@
             padding: 24px;
             text-decoration: none;
             color: var(--text-color);
-            transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s ease-out; /* Added opacity transition */
-            display: flex; /* Important for filtering show/hide */
+            transition: transform 0.2s, box-shadow 0.2s, opacity 0.3s ease-out;
+            display: flex;
             flex-direction: column;
             gap: 16px;
         }
@@ -199,16 +200,15 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
-        /* Style for hidden cards (used by JS) */
         .tool-card.hidden-by-search {
             opacity: 0;
             transform: scale(0.9);
             pointer-events: none;
-            height: 0; /* Helps with grid layout when hiding */
+            height: 0;
             padding-top: 0;
             padding-bottom: 0;
-            margin-bottom: -24px; /* Counteract gap when hiding */
-            overflow: hidden; /* Ensure content doesn't spill */
+            margin-bottom: -24px;
+            overflow: hidden;
             border: none;
         }
         .tool-card .icon {
@@ -355,8 +355,6 @@
                     <h2>Password Generator</h2>
                     <p>Create strong, secure, and random passwords to protect your accounts.</p>
                 </a>
-                <!-- You can add a "No results found" message div here if desired -->
-                <!-- <div id="no-results-message" style="display: none; color: var(--text-secondary); text-align: center; grid-column: 1 / -1;">No tools found matching your search.</div> -->
             </div>
         </main>
 
@@ -399,7 +397,6 @@
             }
         });
 
-        // --- SEARCH BOX VISIBILITY LOGIC ---
         const searchIconBtn = document.querySelector('.search-btn-icon');
         const searchBoxContainer = document.getElementById('search-box-container');
         const searchInput = document.getElementById('search-input');
@@ -411,16 +408,15 @@
             if (searchBoxContainer.classList.contains('visible')) {
                 searchInput.focus(); 
             } else {
-                // If closing search box, clear search and show all tools
-                searchInput.value = ''; // Clear the input
-                filterToolCards(''); // Call filter function with empty string
+                searchInput.value = ''; 
+                filterToolCards(''); 
             }
         });
 
         closeSearchBtn.addEventListener('click', () => {
             searchBoxContainer.classList.remove('visible');
-            searchInput.value = ''; // Clear the input
-            filterToolCards(''); // Call filter function with empty string
+            searchInput.value = ''; 
+            filterToolCards(''); 
         });
 
         document.addEventListener('click', (event) => {
@@ -428,7 +424,6 @@
                 !searchBoxContainer.contains(event.target) && 
                 !searchIconBtn.contains(event.target)) {
                 searchBoxContainer.classList.remove('visible');
-                // Don't clear search on outside click if user might want to keep the filter
             }
         });
 
@@ -439,59 +434,30 @@
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape' && searchBoxContainer.classList.contains('visible')) {
                 searchBoxContainer.classList.remove('visible');
-                // Don't clear search on Esc if user might want to keep the filter
             }
         });
-        // --- END OF SEARCH BOX VISIBILITY LOGIC ---
 
-        // --- NAYA JAVASCRIPT: TOOL SEARCH FILTERING ---
         const toolCards = document.querySelectorAll('.tool-card');
-        // Optional: const noResultsMessage = document.getElementById('no-results-message');
 
         function filterToolCards(searchTerm) {
             const lowerCaseSearchTerm = searchTerm.toLowerCase().trim();
-            let visibleCount = 0;
-
             toolCards.forEach(card => {
                 const title = card.querySelector('h2').textContent.toLowerCase();
                 const description = card.querySelector('p').textContent.toLowerCase();
-                // You could also search tags if they have meaningful text:
-                // const tag = card.querySelector('.tag') ? card.querySelector('.tag').textContent.toLowerCase() : '';
-                
                 const isMatch = title.includes(lowerCaseSearchTerm) || 
                                 description.includes(lowerCaseSearchTerm);
-                                // || (tag && tag.includes(lowerCaseSearchTerm));
-
                 if (isMatch) {
-                    // Instead of card.style.display, we'll use a class for smoother transitions
                     card.classList.remove('hidden-by-search');
-                    card.style.display = 'flex'; // Ensure it's visible with flex display
-                    visibleCount++;
+                    card.style.display = 'flex'; 
                 } else {
                     card.classList.add('hidden-by-search');
-                    // We'll let the CSS class handle hiding, but for immediate effect:
-                    // card.style.display = 'none'; 
-                    // The CSS class .hidden-by-search will now handle the hiding with animation
                 }
             });
-
-            // Optional: Show/hide "no results" message
-            /*
-            if (noResultsMessage) {
-                if (visibleCount === 0 && lowerCaseSearchTerm !== '') {
-                    noResultsMessage.style.display = 'block';
-                } else {
-                    noResultsMessage.style.display = 'none';
-                }
-            }
-            */
         }
 
         searchInput.addEventListener('input', () => {
             filterToolCards(searchInput.value);
         });
-        
-        // --- END OF NAYA JAVASCRIPT: TOOL SEARCH FILTERING ---
     </script>
 </body>
 </html>
