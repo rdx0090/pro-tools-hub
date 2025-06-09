@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Magic Kit - Pro Tools Hub</title> <!-- Title bhi update kar diya -->
+    <title>Magic Kit - Pro Tools Hub</title>
     <meta name="description" content="A collection of free, fast, and private online tools including an image compressor, image enhancer, QR code generator, and more.">
 
-    <!-- Original Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- NAYA FONT "Magic Kit" ke liye -->
     <link href="https://fonts.googleapis.com/css2?family=Sacramento&display=swap" rel="stylesheet">
 
     <style>
@@ -37,9 +34,8 @@
             margin: 0 auto;
         }
 
-        /* --- AAPKA PURANA CODE JAISE KA TAISA --- */
         .site-header {
-            position: relative;
+            position: relative; /* This is crucial for absolute positioning of children */
             margin-bottom: 48px;
         }
         .logo-link {
@@ -48,45 +44,91 @@
             left: 0;
             width: 48px;
             height: 48px;
+            z-index: 10; /* Ensure logo is above the central header content */
         }
         .logo-svg {
             width: 100%;
             height: 100%;
-            fill: url(#logo-gradient); /* Gradient fill */
+            fill: url(#logo-gradient);
             transition: transform 0.3s ease;
         }
         .logo-link:hover .logo-svg {
             transform: rotate(-15deg) scale(1.1);
         }
+
+        /* --- NAYA CSS SEARCH ICON KE LIYE (Ensuring it's clickable) --- */
+        .search-icon-wrapper {
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 10; /* Ensure search icon is above the central header content */
+        }
+        .search-btn-icon {
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 48px; 
+            height: 48px;
+            padding: 12px;
+            box-sizing: border-box;
+            border-radius: 50%;
+            transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .search-btn-icon svg {
+            display: block;
+            width: 24px;
+            height: 24px;
+        }
+        .search-btn-icon:hover {
+            color: var(--accent-color);
+            background-color: rgba(255, 255, 255, 0.08);
+            transform: scale(1.05);
+        }
+        /* --- END OF NAYA CSS SEARCH ICON --- */
+        
+        /* Styles for the central header block containing titles */
+        .site-header > header { /* Targeting the <header> inside .site-header */
+            text-align: center;
+            position: relative; /* Establish stacking context */
+            z-index: 1;         /* Place it behind elements with z-index > 1 (like logo and search icon) */
+        }
+        
         .magic-kit-title {
             font-family: 'Sacramento', cursive;
             font-size: 3rem;
             font-weight: 500;
-            margin-bottom: -10px; /* Thoda sa upar Pro Tools Hub ke */
+            margin-bottom: -10px;
             color: #c7d2fe;
-            animation: zoomEffect 4s ease-in-out infinite; /* Animation apply kiya */
+            animation: zoomEffect 4s ease-in-out infinite;
         }
         @keyframes zoomEffect {
             0% { transform: scale(1); }
             50% { transform: scale(1.08); }
             100% { transform: scale(1); }
         }
-        header {
-            text-align: center;
-        }
-        header h1 {
+        
+        /* Changed selector from global 'header h1' to be more specific if needed,
+           but given the structure, 'header h1' primarily targets the site title.
+           If you had other <header> elements, you might use '.site-header > header h1' */
+        .site-header > header h1 { 
             font-size: 2.8rem;
             font-weight: 700;
             background: -webkit-linear-gradient(45deg, var(--accent-color), #a855f7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-top: 0; /* Adjust if needed due to magic-kit-title margin */
         }
-        header p {
+        .site-header > header p {
             font-size: 1.125rem;
             color: var(--text-secondary);
             max-width: 600px;
             margin: 8px auto 0;
         }
+
         .tools-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -153,8 +195,6 @@
             background-color: var(--accent-hover);
             transform: scale(1.05);
         }
-
-        /* --- NAYA CSS FOOTER LINKS KE LIYE --- */
         .footer-links {
             margin-bottom: 24px;
         }
@@ -167,40 +207,6 @@
         .footer-links a:hover {
             color: var(--accent-color);
         }
-
-        /* --- NAYA CSS SEARCH ICON KE LIYE --- */
-        .search-icon-wrapper {
-            position: absolute;
-            top: 0; /* Vertically align with logo top */
-            right: 0; /* Align to the right of the site-header */
-            z-index: 10; /* Ensure it's clickable */
-        }
-        .search-btn-icon {
-            background-color: transparent;
-            border: none;
-            color: var(--text-secondary); /* Initial icon color */
-            cursor: pointer;
-            width: 48px;  /* Match logo dimensions for balance */
-            height: 48px; /* Match logo dimensions for balance */
-            padding: 12px; /* (48px button size - 24px icon size) / 2 */
-            box-sizing: border-box; /* Ensures padding is included in width/height */
-            border-radius: 50%; /* Rounded button look */
-            transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
-            display: flex; /* For centering the SVG inside */
-            align-items: center;
-            justify-content: center;
-        }
-        .search-btn-icon svg {
-            display: block; /* Removes any extra space below SVG */
-            width: 24px; /* Actual size of the search icon */
-            height: 24px; /* Actual size of the search icon */
-        }
-        .search-btn-icon:hover {
-            color: var(--accent-color); /* Icon color on hover */
-            background-color: rgba(255, 255, 255, 0.08); /* Subtle background on hover */
-            transform: scale(1.05); /* Slight zoom effect on hover */
-        }
-
     </style>
 </head>
 <body>
@@ -217,11 +223,10 @@
         <div class="site-header">
             <a href="index.html" class="logo-link" title="Back to Home">
                 <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.T5 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
                 </svg>
             </a>
-
-            <!-- NAYA SEARCH ICON HTML START -->
+            
             <div class="search-icon-wrapper">
                 <button class="search-btn-icon" aria-label="Search Tools" title="Search Tools">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
@@ -229,9 +234,8 @@
                     </svg>
                 </button>
             </div>
-            <!-- NAYA SEARCH ICON HTML END -->
-
-            <header>
+            
+            <header> <!-- This is the <header> element inside .site-header -->
                 <h2 class="magic-kit-title">Magic Kit</h2>
                 <h1>Pro Tools Hub</h1>
                 <p>Your one-stop collection of free, fast, and privacy-focused tools. All processing is done in your browser.</p>
@@ -240,7 +244,6 @@
 
         <main>
             <div class="tools-grid">
-                <!-- Aapke Purane 6 Tools -->
                 <a href="background-remover.html" class="tool-card">
                     <div class="icon">✂️</div>
                     <h2>Background Remover</h2>
@@ -275,8 +278,6 @@
                     <p>Combine multiple files (docs, images, etc.) into a single, smaller ZIP file.</p>
                     <span class="tag">New</span>
                 </a>
-
-                <!-- NAYE TOOLS YAHAN ADD KIYE HAIN -->
                 <a href="image-to-text.html" class="tool-card">
                     <div class="icon">✏️</div>
                     <h2>Image to Text (OCR)</h2>
@@ -292,21 +293,15 @@
         </main>
 
         <footer>
-            <!-- NAYE LINKS YAHAN ADD KIYE HAIN -->
             <div class="footer-links">
                 <a href="privacy.html">Privacy Policy</a>
                 <a href="about.html">About Us</a>
             </div>
-
-            <!-- Aapka Purana Share Button -->
             <button id="share-btn" class="btn-share">🔗 Share with Friends</button>
-
-            <!-- Aapka Purana Copyright Text -->
             <p style="margin-top: 16px;">© 2025 All rights reserved - MagicKit</p>
         </footer>
     </div>
 
-    <!-- Aapka Purana Share Button ka JavaScript -->
     <script>
         const shareBtn = document.getElementById('share-btn');
 
