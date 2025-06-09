@@ -3,10 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Background Remover - Pro Tools Hub</title>
+    
+    <!-- ============================================= -->
+    <!--  SEO CHANGES START HERE                       -->
+    <!-- ============================================= -->
+    
+    <title>Free AI Background Remover - Remove Background from Image | MagicKit</title>
+    <meta name="description" content="Instantly remove the background from any image for free with MagicKit's AI tool. Get a transparent background (PNG) in seconds. Perfect for portraits, products, and graphics.">
+    <meta name="keywords" content="background remover, remove background, free background remover, ai background remover, transparent background, png background, image background remover, MagicKit">
+
+    <!-- ============================================= -->
+    <!--  SEO CHANGES END HERE                         -->
+    <!-- ============================================= -->
+
     <!-- Confetti Library for firecracker effect -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -119,13 +131,13 @@
             // --- NAYA: Timer ko shuru karein ---
             let seconds = 0;
             if (timerInterval) clearInterval(timerInterval); // Purana timer saaf karein
-            
+
             const formData = new FormData();
             formData.append('image_file', file);
             formData.append('size', 'auto');
-            
+
             const xhr = new XMLHttpRequest();
-            
+
             // --- NAYA: Progress Listener ---
             xhr.upload.onprogress = (event) => {
                 if (event.lengthComputable) {
@@ -134,7 +146,7 @@
                     statusText.textContent = `Uploading... ${Math.round(percentComplete)}%`;
                 }
             };
-            
+
             // --- NAYA: Upload shuru hone par Timer start karein ---
             xhr.upload.onloadstart = () => {
                 timerInterval = setInterval(() => {
@@ -151,22 +163,22 @@
             xhr.upload.onload = () => {
                 statusText.textContent = `Processing with AI... (${seconds}s)`;
             };
-            
+
             // --- NAYA: Poora process khatam hone par ---
             xhr.onload = () => {
                 clearInterval(timerInterval); // Timer ko rokein
-                
+
                 if (xhr.status === 200) {
                     const imageBlob = xhr.response;
                     const imageUrl = URL.createObjectURL(imageBlob);
-                    
+
                     resultImage.src = imageUrl;
                     downloadBtn.href = imageUrl;
                     resultCard.style.display = 'block';
-                    
+
                     statusText.textContent = `Success! 🎉 Background removed in ${seconds} seconds.`;
                     statusText.style.color = 'var(--success-color)';
-                    
+
                     confetti({ particleCount: 150, spread: 180, origin: { y: 0.6 } });
 
                 } else {
@@ -181,7 +193,7 @@
                 }
                  progressContainer.style.display = 'none';
             };
-            
+
             xhr.onerror = () => {
                 clearInterval(timerInterval); // Error par bhi timer rokein
                 statusText.textContent = 'Error: Network request failed.';
