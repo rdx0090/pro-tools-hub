@@ -341,22 +341,10 @@
 
         // Search functionality (basic client-side)
         const searchInput = document.getElementById('searchInput');
-        const toolCards = document.querySelectorAll('.tool-card');
 
         searchInput.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
             console.log("Search Term:", searchTerm); // Added console log to see what's being typed
-
-            toolCards.forEach(card => {
-                const title = card.querySelector('h2').textContent.toLowerCase();
-                const description = card.querySelector('p').textContent.toLowerCase();
-
-                if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                    card.style.display = 'flex'; // Show card
-                } else {
-                    card.style.display = 'none'; // Hide card
-                }
-            });
         });
     </script>
 </body>
