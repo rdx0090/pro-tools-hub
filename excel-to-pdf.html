@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel to PDF Converter - Pro Tools Hub</title>
+
+    <!-- ============================================= -->
+    <!--  SEO CHANGES START HERE                       -->
+    <!-- ============================================= -->
     
+    <title>Free Excel to PDF Converter - Convert XLSX to PDF Online | MagicKit</title>
+    <meta name="description" content="Convert your Excel spreadsheets (.xlsx, .xls) to high-quality PDF documents for free. MagicKit's online converter is fast, secure, and works in your browser.">
+    <meta name="keywords" content="excel to pdf, xlsx to pdf, convert excel to pdf, free excel to pdf, online excel converter, spreadsheet to pdf, MagicKit">
+    
+    <!-- ============================================= -->
+    <!--  SEO CHANGES END HERE                         -->
+    <!-- ============================================= -->
+
     <!-- Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -64,7 +75,7 @@
                 <p>or</p>
                 <button id="browse-btn" class="btn-primary" style="max-width: 200px;">Browse File</button>
             </div>
-            
+
             <div class="options-grid">
                 <div>
                     <label style="display: block; text-align: center; margin-bottom: 8px; color: var(--text-secondary);">PDF Orientation</label>
@@ -114,7 +125,7 @@
             dropZone.classList.remove('drag-over');
             handleFile(e.dataTransfer.files[0]);
         });
-        
+
         // Helper to update progress
         function updateProgress(percentage, text) {
             progressBarFill.style.width = `${percentage}%`;
@@ -138,7 +149,7 @@
                     await new Promise(resolve => setTimeout(resolve, 200)); // Small delay for UI update
                     updateProgress(25, `Reading "${file.name}"...`);
                     const data = new Uint8Array(e.target.result);
-                    
+
                     // Step 2: Parsing Excel data
                     await new Promise(resolve => setTimeout(resolve, 200));
                     updateProgress(50, 'Parsing Excel data...');
@@ -146,17 +157,17 @@
                     const firstSheetName = workbook.SheetNames[0];
                     const worksheet = workbook.Sheets[firstSheetName];
                     const json_data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                    
+
                     // Step 3: Creating PDF
                     await new Promise(resolve => setTimeout(resolve, 200));
                     updateProgress(75, 'Generating PDF document...');
                     const selectedOrientation = document.querySelector('input[name="orientation"]:checked').value;
                     createPdf(json_data, file.name.replace(/\.[^/.]+$/, ".pdf"), selectedOrientation);
-                    
+
                     // Step 4: Done
                     await new Promise(resolve => setTimeout(resolve, 200));
                     updateProgress(100, 'Conversion successful! Check your downloads.');
-                    
+
                 } catch (error) {
                     console.error("Error processing file:", error);
                     updateProgress(0, 'An error occurred during conversion.');
@@ -177,7 +188,7 @@
             const doc = new jsPDF({
                 orientation: orientation,
             });
-            
+
             const head = [data[0]]; // Table headers
             const body = data.slice(1); // Table body
 
@@ -189,7 +200,7 @@
                 styles: { fontSize: 8, cellPadding: 2, },
                 headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' }
             });
-            
+
             doc.save(filename);
         }
     </script>
