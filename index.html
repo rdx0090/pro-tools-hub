@@ -151,23 +151,22 @@
             z-index: 1;
         }
 
-        /* UPDATED STYLE FOR "Welcome To" TEXT */
         .welcome-text {
-            font-family: 'Inter', sans-serif; /* Explicitly using Inter */
-            font-size: 2.4rem;      /* Thoda bada kiya */
-            font-weight: 600;       /* Thoda mota kiya (bold) */
-            color: #c7d2fe;         /* Same color as "Magic Kit" title for consistency */
-            line-height: 1.2;       /* Line height for "Welcome" and "To" */
+            font-family: 'Inter', sans-serif; 
+            font-size: 2.4rem;      
+            font-weight: 600;       
+            color: #c7d2fe;         
+            line-height: 1.2;       
             margin-top: 0;
-            margin-bottom: 4px;     /* "Magic Kit" se thoda upar gap */
-            letter-spacing: 0.5px;  /* Aksharon ke beech thodi si jagah */
+            margin-bottom: 4px;     
+            letter-spacing: 0.5px; 
         }
 
         .magic-kit-title {
             font-family: 'Pacifico', cursive;
             font-size: 3.2rem;
             font-weight: 400;
-            margin-top: 0; /* Ensures no extra space from .welcome-text */
+            margin-top: 0;
             margin-bottom: -10px;
             color: #c7d2fe;
             animation: zoomEffect 4s ease-in-out infinite;
@@ -220,24 +219,13 @@
             height: 0;
             padding-top: 0;
             padding-bottom: 0;
-            margin-bottom: -24px; /* Matches gap */
+            margin-bottom: -24px; 
             overflow: hidden;
             border: none;
         }
-        .tool-card .icon {
-            font-size: 2.5rem;
-        }
-        .tool-card h2 {
-            margin: 0;
-            font-size: 1.25rem;
-            color: var(--text-color);
-        }
-        .tool-card p {
-            margin: 0;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            flex-grow: 1;
-        }
+        .tool-card .icon { font-size: 2.5rem; }
+        .tool-card h2 { margin: 0; font-size: 1.25rem; color: var(--text-color); }
+        .tool-card p { margin: 0; color: var(--text-secondary); font-size: 0.9rem; flex-grow: 1; }
         .tool-card .tag {
             background-color: var(--accent-color);
             color: white;
@@ -296,17 +284,11 @@
     <div class="container">
         <div class="site-header">
             <a href="index.html" class="logo-link" title="Back to Home">
-                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" />
-                </svg>
+                <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" /></svg>
             </a>
 
             <div class="search-icon-wrapper">
-                <button class="search-btn-icon" aria-label="Open Search" title="Search Tools">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" clip-rule="evenodd" />
-                    </svg>
-                </button>
+                <button class="search-btn-icon" aria-label="Open Search" title="Search Tools"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z" clip-rule="evenodd" /></svg></button>
             </div>
 
             <div id="search-box-container" class="search-box-container">
@@ -324,51 +306,14 @@
 
         <main>
             <div class="tools-grid">
-                <a href="background-remover.html" class="tool-card">
-                    <div class="icon">✂️</div>
-                    <h2>Background Remover</h2>
-                    <p>Automatically remove the background from any image using AI.</p>
-                    <span class="tag" style="background-color: #f59e0b;">Pro</span>
-                </a>
-                <a href="image-compressor.html" class="tool-card">
-                    <div class="icon">🗜️</div>
-                    <h2>Image Compressor</h2>
-                    <p>Reduce the file size of your images in bulk without losing quality.</p>
-                    <span class="tag">Popular</span>
-                </a>
-                <a href="image-enhancer.html" class="tool-card">
-                    <div class="icon">✨</div>
-                    <h2>Image Enhancer</h2>
-                    <p>Apply filters like brightness, contrast, and saturation to your photos.</p>
-                    <span class="tag">New</span>
-                </a>
-                <a href="qr-code-generator.html" class="tool-card">
-                    <div class="icon">📱</div>
-                    <h2>QR Code Generator</h2>
-                    <p>Create QR codes for URLs, text, Wi-Fi, and more instantly.</p>
-                </a>
-                <a href="excel-to-pdf.html" class="tool-card">
-                    <div class="icon">📄</div>
-                    <h2>Excel to PDF</h2>
-                    <p>Convert your Excel spreadsheets (.xlsx) into PDF documents online.</p>
-                </a>
-                <a href="file-compressor.html" class="tool-card">
-                    <div class="icon">📁</div>
-                    <h2>File Compressor (ZIP)</h2>
-                    <p>Combine multiple files (docs, images, etc.) into a single, smaller ZIP file.</p>
-                    <span class="tag">New</span>
-                </a>
-                <a href="image-to-text.html" class="tool-card">
-                    <div class="icon">✏️</div>
-                    <h2>Image to Text (OCR)</h2>
-                    <p>Extract editable text from any image or screenshot instantly.</p>
-                    <span class="tag" style="background-color: #ef4444;">Magic</span>
-                </a>
-                <a href="password-generator.html" class="tool-card">
-                    <div class="icon">🛡️</div>
-                    <h2>Password Generator</h2>
-                    <p>Create strong, secure, and random passwords to protect your accounts.</p>
-                </a>
+                <a href="background-remover.html" class="tool-card"><div class="icon">✂️</div><h2>Background Remover</h2><p>Automatically remove the background from any image using AI.</p><span class="tag" style="background-color: #f59e0b;">Pro</span></a>
+                <a href="image-compressor.html" class="tool-card"><div class="icon">🗜️</div><h2>Image Compressor</h2><p>Reduce the file size of your images in bulk without losing quality.</p><span class="tag">Popular</span></a>
+                <a href="image-enhancer.html" class="tool-card"><div class="icon">✨</div><h2>Image Enhancer</h2><p>Apply filters like brightness, contrast, and saturation to your photos.</p><span class="tag">New</span></a>
+                <a href="qr-code-generator.html" class="tool-card"><div class="icon">📱</div><h2>QR Code Generator</h2><p>Create QR codes for URLs, text, Wi-Fi, and more instantly.</p></a>
+                <a href="excel-to-pdf.html" class="tool-card"><div class="icon">📄</div><h2>Excel to PDF</h2><p>Convert your Excel spreadsheets (.xlsx) into PDF documents online.</p></a>
+                <a href="file-compressor.html" class="tool-card"><div class="icon">📁</div><h2>File Compressor (ZIP)</h2><p>Combine multiple files (docs, images, etc.) into a single, smaller ZIP file.</p><span class="tag">New</span></a>
+                <a href="image-to-text.html" class="tool-card"><div class="icon">✏️</div><h2>Image to Text (OCR)</h2><p>Extract editable text from any image or screenshot instantly.</p><span class="tag" style="background-color: #ef4444;">Magic</span></a>
+                <a href="password-generator.html" class="tool-card"><div class="icon">🛡️</div><h2>Password Generator</h2><p>Create strong, secure, and random passwords to protect your accounts.</p></a>
             </div>
         </main>
 
@@ -384,7 +329,6 @@
 
     <script>
         const shareBtn = document.getElementById('share-btn');
-
         shareBtn.addEventListener('click', async () => {
             const shareData = {
                 title: 'Magic Kit - Pro Tools Hub',
@@ -404,7 +348,7 @@
                     setTimeout(() => {
                         shareBtn.innerHTML = '🔗 Share with Friends';
                     }, 2000);
-                } catch (err) { // <<< YAHAN PAR Galti Thik ki Gayi Hai
+                } catch (err) { 
                     console.error('Failed to copy link: ', err);
                     alert('Could not copy link. Please copy it manually.');
                 }
@@ -471,6 +415,23 @@
         searchInput.addEventListener('input', () => {
             filterToolCards(searchInput.value);
         });
+
+        // --- YAHAN SE CLICK SOUND KA NAYA CODE ADD KIYA GAYA HAI ---
+        
+        // Ek halki si click sound banate hain.
+        const clickSound = new Audio('https://cdn.pixabay.com/audio/2022/03/15/audio_2b28b8a82b.mp3');
+        clickSound.volume = 0.5; // Sound ko thoda dheema rakhte hain.
+
+        // Hum upar banaye gaye 'toolCards' variable ka hi istemal kar rahe hain.
+        // Har tool card par click karne par yeh sound chalega.
+        toolCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Sound bajate hain
+                clickSound.play();
+            });
+        });
+
+        // --- YAHAN PAR NAYA CODE KHATAM HUA HAI ---
     </script>
 </body>
 </html>
