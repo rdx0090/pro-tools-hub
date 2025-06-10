@@ -36,5 +36,21 @@
     <loc>https://magickit.space/password-generator.html</loc>
     <priority>0.8</priority>
   </url>
-  <!-- Aap apne baaki saare tool pages ke link bhi aise hi add kar sakte hain -->
+  <!-- ============================================= -->
+  <!--  NAYA TOOL ADD KIYA GAYA HAI                  -->
+  <!-- ============================================= -->
+  <url>
+    <loc>https://magickit.space/case-converter.html</loc>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Aapke legal pages bhi add kar diye hain -->
+  <url>
+    <loc>https://magickit.space/about.html</loc>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://magickit.space/privacy.html</loc>
+    <priority>0.5</priority>
+  </url>
 </urlset>
