@@ -8,18 +8,13 @@
     <meta name="description" content="MagicKit is your ultimate suite of free online tools. Use our AI Background Remover, Image Compressor, PDF converters, Password Generator, and more. Fast, private, and easy to use.">
     <meta name="keywords" content="free tools, online tools, image compressor, background remover, ai tools, pdf converter, qr code generator, password generator, MagicKit, pro tools hub">
 
-    <!-- ============================================= -->
-    <!--  FAVICON ADDED HERE (SINGLE LINE SOLUTION)    -->
-    <!-- ============================================= -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233B82F6' fill-rule='evenodd' d='M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z' clip-rule='evenodd'/%3E%3C/svg%3E">
-
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
-
     <style>
-        /* Aapka poora CSS bilkul waisa hi hai, koi badlav nahi. */
+        /* Aapka poora CSS bilkul waisa hi hai */
         :root {
             --bg-color: #111827;
             --card-color: #1f2937;
@@ -36,11 +31,7 @@
             margin: 0;
             padding: 24px;
         }
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; }
         .site-header { position: relative; margin-bottom: 48px; }
         .logo-link { position: absolute; top: 0; left: 0; width: 48px; height: 48px; z-index: 10; }
         .logo-svg { width: 100%; height: 100%; fill: url(#logo-gradient); transition: transform 0.3s ease; }
@@ -89,7 +80,6 @@
     </svg>
 
     <div class="container">
-        <!-- Aapka poora HTML (header, main, footer) bilkul waisa hi hai -->
         <div class="site-header">
             <a href="index.html" class="logo-link" title="Back to Home">
                 <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" /></svg>
@@ -113,18 +103,18 @@
                 <a href="background-remover.html" class="tool-card"><div class="icon">✂️</div><h2>Background Remover</h2><p>Automatically remove the background from any image using AI.</p><span class="tag" style="background-color: #f59e0b;">Pro</span></a>
                 <a href="image-compressor.html" class="tool-card"><div class="icon">🗜️</div><h2>Image Compressor</h2><p>Reduce the file size of your images in bulk without losing quality.</p><span class="tag">Popular</span></a>
                 <a href="image-enhancer.html" class="tool-card"><div class="icon">✨</div><h2>Image Enhancer</h2><p>Apply filters like brightness, contrast, and saturation to your photos.</p><span class="tag">New</span></a>
+                <!-- Case Converter Tool with NEW EMOJI ICON -->
+                <a href="case-converter.html" class="tool-card">
+                    <div class="icon">✒️</div>
+                    <h2>Case Converter</h2>
+                    <p>Convert text to UPPERCASE, lowercase, Sentence case, and more. Also counts words and characters.</p>
+                    <span class="tag" style="background-color: #10b981;">Essential</span>
+                </a>
                 <a href="qr-code-generator.html" class="tool-card"><div class="icon">📱</div><h2>QR Code Generator</h2><p>Create QR codes for URLs, text, Wi-Fi, and more instantly.</p></a>
                 <a href="excel-to-pdf.html" class="tool-card"><div class="icon">📄</div><h2>Excel to PDF</h2><p>Convert your Excel spreadsheets (.xlsx) into PDF documents online.</p></a>
                 <a href="file-compressor.html" class="tool-card"><div class="icon">📁</div><h2>File Compressor (ZIP)</h2><p>Combine multiple files (docs, images, etc.) into a single, smaller ZIP file.</p><span class="tag">New</span></a>
                 <a href="image-to-text.html" class="tool-card"><div class="icon">✏️</div><h2>Image to Text (OCR)</h2><p>Extract editable text from any image or screenshot instantly.</p><span class="tag" style="background-color: #ef4444;">Magic</span></a>
                 <a href="password-generator.html" class="tool-card"><div class="icon">🛡️</div><h2>Password Generator</h2><p>Create strong, secure, and random passwords to protect your accounts.</p></a>
-                 <!-- Case Converter Tool -->
-<a href="case-converter.html" class="tool-card">
-    <div class="icon">Aa</div>
-    <h2>Case Converter</h2>
-    <p>Convert text to UPPERCASE, lowercase, Sentence case, and more. Also counts words and characters.</p>
-    <span class="tag" style="background-color: #10b981;">Essential</span>
-</a>
             </div>
         </main>
         <footer>
@@ -137,13 +127,9 @@
         </footer>
     </div>
 
-    <!-- ============================================= -->
-    <!--  FINAL, CORRECTED & CLEANED JAVASCRIPT LOGIC  -->
-    <!-- ============================================= -->
     <script>
+        // Aapka poora JavaScript bilkul waisa hi hai
         document.addEventListener('DOMContentLoaded', () => {
-
-            // --- SELECT ALL ELEMENTS AT ONCE ---
             const searchIconBtn = document.querySelector('.search-btn-icon');
             const searchBoxContainer = document.getElementById('search-box-container');
             const searchInput = document.getElementById('search-input');
@@ -151,38 +137,21 @@
             const shareBtn = document.getElementById('share-btn');
             const allToolCards = document.querySelectorAll('.tool-card');
 
-            // --- SEARCH LOGIC ---
             if (searchIconBtn && searchBoxContainer && searchInput && closeSearchBtn) {
-                searchIconBtn.addEventListener('click', () => {
-                    searchBoxContainer.classList.add('visible');
-                    searchInput.focus();
-                });
-
-                closeSearchBtn.addEventListener('click', () => {
-                    searchBoxContainer.classList.remove('visible');
-                });
-
+                searchIconBtn.addEventListener('click', () => { searchBoxContainer.classList.add('visible'); searchInput.focus(); });
+                closeSearchBtn.addEventListener('click', () => { searchBoxContainer.classList.remove('visible'); });
                 searchInput.addEventListener('input', () => {
                     const searchTerm = searchInput.value.toLowerCase().trim();
                     allToolCards.forEach(card => {
                         const title = card.querySelector('h2').textContent.toLowerCase();
                         const description = card.querySelector('p').textContent.toLowerCase();
                         const shouldShow = title.includes(searchTerm) || description.includes(searchTerm);
-
-                        // Hide/Show logic
-                        if (shouldShow) {
-                            card.style.display = 'flex';
-                            card.classList.remove('hidden-by-search');
-                        } else {
-                            // Using a class is better for animations if you add them later
-                            card.style.display = 'none';
-                            card.classList.add('hidden-by-search');
-                        }
+                        if (shouldShow) { card.style.display = 'flex'; card.classList.remove('hidden-by-search');
+                        } else { card.style.display = 'none'; card.classList.add('hidden-by-search'); }
                     });
                 });
             }
 
-            // --- SHARE BUTTON LOGIC ---
             if (shareBtn) {
                 shareBtn.addEventListener('click', async () => {
                     const shareData = {
@@ -190,24 +159,11 @@
                         text: 'Check out this awesome collection of free online tools on MagicKit!',
                         url: window.location.href 
                     };
-
                     if (navigator.share) {
-                        try {
-                            await navigator.share(shareData);
-                        } catch (err) {
-                            console.log('User cancelled sharing or an error occurred:', err);
-                        }
+                        try { await navigator.share(shareData); } catch (err) { console.log('User cancelled sharing or an error occurred:', err); }
                     } else {
-                        try {
-                            await navigator.clipboard.writeText(window.location.href);
-                            shareBtn.textContent = '✅ Link Copied!';
-                            setTimeout(() => {
-                                shareBtn.textContent = '🔗 Share with Friends';
-                            }, 2000);
-                        } catch (err) {
-                            console.error('Failed to copy link: ', err);
-                            alert('Could not copy the link. Please copy it from the address bar.');
-                        }
+                        try { await navigator.clipboard.writeText(window.location.href); shareBtn.textContent = '✅ Link Copied!'; setTimeout(() => { shareBtn.textContent = '🔗 Share with Friends'; }, 2000);
+                        } catch (err) { console.error('Failed to copy link: ', err); alert('Could not copy the link. Please copy it from the address bar.'); }
                     }
                 });
             }
