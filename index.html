@@ -23,6 +23,8 @@
             --accent-color: #3b82f6;
             --accent-hover: #2563eb;
             --border-color: #374151;
+            /* Naye counter ke liye color add kiya hai */
+            --success-color: #10b981; 
         }
         body {
             font-family: 'Inter', sans-serif;
@@ -67,9 +69,31 @@
         .footer-links { margin-bottom: 24px; }
         .footer-links a { color: var(--text-secondary); text-decoration: none; margin: 0 12px; transition: color 0.2s; }
         .footer-links a:hover { color: var(--accent-color); }
+        
+        /* --- STYLES FOR VISITOR COUNTERS (ADDED) --- */
+        .visitor-counters { position: fixed; top: 15px; width: 100%; max-width: 1200px; left: 50%; transform: translateX(-50%); display: flex; justify-content: space-between; z-index: 1000; pointer-events: none; }
+        .counter-box { background-color: rgba(31, 41, 55, 0.8); backdrop-filter: blur(5px); color: var(--text-color); padding: 8px 16px; border-radius: 99px; font-size: 0.9rem; font-weight: 500; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        .counter-box .label { color: var(--text-secondary); }
+        .counter-box .count { font-weight: 700; color: var(--success-color); margin-left: 8px; }
+        @media (max-width: 1250px) { .visitor-counters { padding: 0 24px; box-sizing: border-box; } }
+        @media (max-width: 600px) { .counter-box { font-size: 0.8rem; padding: 6px 12px; } .visitor-counters { top: 10px; } }
     </style>
 </head>
 <body>
+    <!-- ============================================= -->
+    <!--  VISITOR COUNTER HTML (ADDED)                 -->
+    <!-- ============================================= -->
+    <div class="visitor-counters">
+        <div class="counter-box left">
+            <span class="label">Today's Visitors:</span>
+            <span id="today-visitors" class="count">...</span>
+        </div>
+        <div class="counter-box right">
+            <span class="label">Total Visitors:</span>
+            <span id="total-visitors" class="count">...</span>
+        </div>
+    </div>
+
     <svg width="0" height="0" style="position:absolute">
       <defs>
         <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -136,7 +160,29 @@
             const closeSearchBtn = document.getElementById('close-search-btn');
             const shareBtn = document.getElementById('share-btn');
             const allToolCards = document.querySelectorAll('.tool-card');
+            
+            // --- VISITOR COUNTER LOGIC (ADDED) ---
+            const totalVisitorsEl = document.getElementById('total-visitors');
+            const todayVisitorsEl = document.getElementById('today-visitors');
+            async function getVisitors() {
+                try {
+                    const [totalRes, todayRes] = await Promise.all([
+                        fetch('https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fmagickit.space&countColor=%2310B981'),
+                        fetch('https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fmagickit.space&countColor=%2310B981&period=daily')
+                    ]);
+                    const totalData = await totalRes.json();
+                    const todayData = await todayRes.json();
+                    if(totalVisitorsEl) totalVisitorsEl.textContent = totalData.value;
+                    if(todayVisitorsEl) todayVisitorsEl.textContent = todayData.value;
+                } catch (error) {
+                    console.error('Failed to fetch visitors:', error);
+                    if(totalVisitorsEl) totalVisitorsEl.textContent = 'N/A';
+                    if(todayVisitorsEl) todayVisitorsEl.textContent = 'N/A';
+                }
+            }
+            getVisitors(); // Call the function to get counts on page load
 
+            // --- SEARCH LOGIC (No changes) ---
             if (searchIconBtn && searchBoxContainer && searchInput && closeSearchBtn) {
                 searchIconBtn.addEventListener('click', () => { searchBoxContainer.classList.add('visible'); searchInput.focus(); });
                 closeSearchBtn.addEventListener('click', () => { searchBoxContainer.classList.remove('visible'); });
@@ -152,6 +198,7 @@
                 });
             }
 
+            // --- SHARE BUTTON LOGIC (No changes) ---
             if (shareBtn) {
                 shareBtn.addEventListener('click', async () => {
                     const shareData = {
