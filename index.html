@@ -14,14 +14,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
+        /* Aapka poora CSS bilkul waisa hi hai */
         :root {
-            --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
-            --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
-            --border-color: #374151; --success-color: #10b981; 
+            --bg-color: #111827;
+            --card-color: #1f2937;
+            --text-color: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --border-color: #374151;
+            --success-color: #10b981; 
         }
         body {
-            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
-            margin: 0; padding: 24px; padding-top: 60px; 
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 24px;
+            padding-top: 60px; 
         }
         .container { width: 100%; max-width: 1200px; margin: 0 auto; }
         .site-header { position: relative; margin-bottom: 48px; }
@@ -66,7 +76,6 @@
     </style>
 </head>
 <body>
-    <!-- Naya, Simplified Visitor Counter HTML -->
     <div class="visitor-counter-wrapper">
         <div class="counter-box">
             <span class="label">Total Visitors:</span>
@@ -128,16 +137,18 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- VISITOR COUNTER LOGIC (CORRECTED & SIMPLIFIED) ---
+            // --- VISITOR COUNTER LOGIC (FINAL PROXY METHOD) ---
             const totalVisitorsEl = document.getElementById('total-visitors');
             
             async function getTotalVisitors() {
                 if (!totalVisitorsEl) return;
                 try {
-                    // API call ko seedhe yahan likha hai
-                    const response = await fetch('https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fmagickit.space&countColor=%2310B981');
-                    if (!response.ok) { // Check if response is successful
-                        throw new Error('Network response was not ok');
+                    // *** YAHAN PAR BADLAV KIYA GAYA HAI ***
+                    // Hum ab Vercel ke banaye hue proxy raaste se data maang rahe hain
+                    const response = await fetch('/api/visitors?path=https%3A%2F%2Fmagickit.space&countColor=%2310B981');
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const data = await response.json();
                     totalVisitorsEl.textContent = data.value;
@@ -146,8 +157,6 @@
                     totalVisitorsEl.textContent = 'N/A';
                 }
             }
-
-            // Call the function to get the count
             getTotalVisitors();
 
             // --- Baaki ka saara JavaScript bilkul waisa hi hai ---
