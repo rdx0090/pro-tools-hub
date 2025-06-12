@@ -15,61 +15,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #111827;
-            --card-color: #1f2937;
-            --text-color: #e5e7eb;
-            --text-secondary: #9ca3af;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
-            --border-color: #374151;
-            --success-color: #10b981; 
+            --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
+            --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
+            --border-color: #374151; --success-color: #10b981; 
         }
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 24px;
-            /* Naya Change: Body par padding-top taaki counter ke liye jagah banaye */
-            padding-top: 60px; 
+            font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+            margin: 0; padding: 24px; padding-top: 60px; 
         }
         .container { width: 100%; max-width: 1200px; margin: 0 auto; }
         .site-header { position: relative; margin-bottom: 48px; }
-        
-        /* === COUNTER AND HEADER FIXES START HERE === */
-        
-        /* Visitor Counter ko Top Right mein Set Karna */
-        .visitor-counter-wrapper {
-            position: fixed; /* Page ke saath scroll nahi hoga */
-            top: 15px; /* Upar se thoda neeche */
-            right: 24px; /* Right se thoda andar */
-            z-index: 1000;
-        }
-        .counter-box {
-            background-color: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(5px);
-            color: var(--text-color);
-            padding: 6px 14px;
-            border-radius: 99px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-        }
+        .visitor-counter-wrapper { position: fixed; top: 15px; right: 24px; z-index: 1000; }
+        .counter-box { background-color: rgba(31, 41, 55, 0.8); backdrop-filter: blur(5px); color: var(--text-color); padding: 6px 14px; border-radius: 99px; font-size: 0.85rem; font-weight: 500; border: 1px solid var(--border-color); box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; }
         .counter-box .label { color: var(--text-secondary); }
         .counter-box .count { font-weight: 700; color: var(--success-color); margin-left: 8px; }
-        
-        /* Header ke elements ko neeche push karna */
         .logo-link { position: absolute; top: 0; left: 0; width: 48px; height: 48px; z-index: 10; }
-        .search-icon-wrapper { position: absolute; top: 0; right: 0; z-index: 10; }
-        /* Baaki ka saara header waisa hi hai, bas ab woh body ki padding ke andar aayega */
-        
-        /* === END OF FIXES === */
-
         .logo-svg { width: 100%; height: 100%; fill: url(#logo-gradient); transition: transform 0.3s ease; }
         .logo-link:hover .logo-svg { transform: rotate(-15deg) scale(1.1); }
+        .search-icon-wrapper { position: absolute; top: 0; right: 0; z-index: 10; }
         .search-btn-icon { background-color: transparent; border: none; color: var(--text-secondary); cursor: pointer; width: 48px; height: 48px; padding: 12px; box-sizing: border-box; border-radius: 50%; transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease; display: flex; align-items: center; justify-content: center; }
         .search-btn-icon svg { display: block; width: 24px; height: 24px; }
         .search-btn-icon:hover { color: var(--accent-color); background-color: rgba(255, 255, 255, 0.08); transform: scale(1.05); }
@@ -103,7 +66,7 @@
     </style>
 </head>
 <body>
-    <!-- Naya, Single Visitor Counter HTML -->
+    <!-- Naya, Simplified Visitor Counter HTML -->
     <div class="visitor-counter-wrapper">
         <div class="counter-box">
             <span class="label">Total Visitors:</span>
@@ -121,7 +84,6 @@
     </svg>
 
     <div class="container">
-        <!-- Baaki saara HTML waisa hi hai, ab kuch chupega nahi -->
         <div class="site-header">
             <a href="index.html" class="logo-link" title="Back to Home">
                 <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clip-rule="evenodd" /></svg>
@@ -165,12 +127,18 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Naya, Simplified Visitor Counter Logic
+
+            // --- VISITOR COUNTER LOGIC (CORRECTED & SIMPLIFIED) ---
             const totalVisitorsEl = document.getElementById('total-visitors');
+            
             async function getTotalVisitors() {
                 if (!totalVisitorsEl) return;
                 try {
+                    // API call ko seedhe yahan likha hai
                     const response = await fetch('https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fmagickit.space&countColor=%2310B981');
+                    if (!response.ok) { // Check if response is successful
+                        throw new Error('Network response was not ok');
+                    }
                     const data = await response.json();
                     totalVisitorsEl.textContent = data.value;
                 } catch (error) {
@@ -178,9 +146,11 @@
                     totalVisitorsEl.textContent = 'N/A';
                 }
             }
+
+            // Call the function to get the count
             getTotalVisitors();
 
-            // Baaki ka saara JavaScript bilkul waisa hi hai
+            // --- Baaki ka saara JavaScript bilkul waisa hi hai ---
             const searchIconBtn = document.querySelector('.search-btn-icon');
             const searchBoxContainer = document.getElementById('search-box-container');
             const searchInput = document.getElementById('search-input');
