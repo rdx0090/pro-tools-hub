@@ -137,15 +137,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- VISITOR COUNTER LOGIC (FINAL PROXY METHOD) ---
+            // --- VISITOR COUNTER LOGIC (FINAL VERCEL FUNCTION METHOD) ---
             const totalVisitorsEl = document.getElementById('total-visitors');
             
             async function getTotalVisitors() {
                 if (!totalVisitorsEl) return;
                 try {
-                    // *** YAHAN PAR BADLAV KIYA GAYA HAI ***
-                    // Hum ab Vercel ke banaye hue proxy raaste se data maang rahe hain
-                    const response = await fetch('/api/visitors?path=https%3A%2F%2Fmagickit.space&countColor=%2310B981');
+                    // Hum ab apne Vercel function wale URL se fetch kar rahe hain
+                    const response = await fetch('/api/visitors'); 
                     
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
