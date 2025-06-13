@@ -142,7 +142,7 @@
             
             function updateVisitorCount() {
                 // Hum seedhe countapi.xyz se data maang rahe hain.
-                // 'magickit.space' ek unique key hai, aap ise badal bhi sakte hain.
+                // 'magickit.space' ek unique key hai. Har baar jab yeh URL call hoga, count +1 ho jayega.
                 fetch('https://api.countapi.xyz/hit/magickit.space/visits')
                     .then(response => response.json())
                     .then(data => {
@@ -158,7 +158,8 @@
                         totalVisitorsEl.textContent = 'N/A';
                     });
             }
-            updateVisitorCount(); // Page load hote hi function ko call karein
+            // Page load hote hi function ko call karein
+            updateVisitorCount();
 
             // --- Baaki ka saara JavaScript bilkul waisa hi hai ---
             const searchIconBtn = document.querySelector('.search-btn-icon');
