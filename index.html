@@ -102,7 +102,7 @@
             </div>
             <div id="search-box-container" class="search-box-container">
                 <input type="search" id="search-input" placeholder="Search tools..." aria-label="Search tools input">
-                <button id="close-search-btn" aria-label="Close search">�</button>
+                <button id="close-search-btn" aria-label="Close search">×</button>
             </div>
             <header>
                 <h3 class="welcome-text">Welcome<br>To</h3>
@@ -113,15 +113,15 @@
         </div>
         <main>
             <div class="tools-grid">
-                <a href="background-remover.html" class="tool-card"><div class="icon"></div><h2>Background Remover</h2><p>Automatically remove the background from any image using AI.</p><span class="tag" style="background-color: #f59e0b;">Pro</span></a>
-                <a href="image-compressor.html" class="tool-card"><div class="icon"></div><h2>Image Compressor</h2><p>Reduce the file size of your images in bulk without losing quality.</p><span class="tag">Popular</span></a>
-                <a href="image-enhancer.html" class="tool-card"><div class="icon"></div><h2>Image Enhancer</h2><p>Apply filters like brightness, contrast, and saturation to your photos.</p><span class="tag">New</span></a>
-                <a href="case-converter.html" class="tool-card"><div class="icon"></div><h2>Case Converter</h2><p>Convert text to UPPERCASE, lowercase, Sentence case, and more. Also counts words and characters.</p><span class="tag" style="background-color: #10b981;">Essential</span></a>
-                <a href="qr-code-generator.html" class="tool-card"><div class="icon"></div><h2>QR Code Generator</h2><p>Create QR codes for URLs, text, Wi-Fi, and more instantly.</p></a>
-                <a href="excel-to-pdf.html" class="tool-card"><div class="icon"></div><h2>Excel to PDF</h2><p>Convert your Excel spreadsheets (.xlsx) into PDF documents online.</p></a>
-                <a href="file-compressor.html" class="tool-card"><div class="icon"></div><h2>File Compressor (ZIP)</h2><p>Combine multiple files (docs, images, etc.) into a single, smaller ZIP file.</p><span class="tag">New</span></a>
-                <a href="image-to-text.html" class="tool-card"><div class="icon"></div><h2>Image to Text (OCR)</h2><p>Extract editable text from any image or screenshot instantly.</p><span class="tag" style="background-color: #ef4444;">Magic</span></a>
-                <a href="password-generator.html" class="tool-card"><div class="icon"></div><h2>Password Generator</h2><p>Create strong, secure, and random passwords to protect your accounts.</p></a>
+                <a href="background-remover.html" class="tool-card"><div class="icon">✂️</div><h2>Background Remover</h2><p>Automatically remove the background from any image using AI.</p><span class="tag" style="background-color: #f59e0b;">Pro</span></a>
+                <a href="image-compressor.html" class="tool-card"><div class="icon">🗜️</div><h2>Image Compressor</h2><p>Reduce the file size of your images in bulk without losing quality.</p><span class="tag">Popular</span></a>
+                <a href="image-enhancer.html" class="tool-card"><div class="icon">✨</div><h2>Image Enhancer</h2><p>Apply filters like brightness, contrast, and saturation to your photos.</p><span class="tag">New</span></a>
+                <a href="case-converter.html" class="tool-card"><div class="icon">✒️</div><h2>Case Converter</h2><p>Convert text to UPPERCASE, lowercase, Sentence case, and more. Also counts words and characters.</p><span class="tag" style="background-color: #10b981;">Essential</span></a>
+                <a href="qr-code-generator.html" class="tool-card"><div class="icon">📱</div><h2>QR Code Generator</h2><p>Create QR codes for URLs, text, Wi-Fi, and more instantly.</p></a>
+                <a href="excel-to-pdf.html" class="tool-card"><div class="icon">📄</div><h2>Excel to PDF</h2><p>Convert your Excel spreadsheets (.xlsx) into PDF documents online.</p></a>
+                <a href="file-compressor.html" class="tool-card"><div class="icon">📁</div><h2>File Compressor (ZIP)</h2><p>Combine multiple files (docs, images, etc.) into a single, smaller ZIP file.</p><span class="tag">New</span></a>
+                <a href="image-to-text.html" class="tool-card"><div class="icon">✏️</div><h2>Image to Text (OCR)</h2><p>Extract editable text from any image or screenshot instantly.</p><span class="tag" style="background-color: #ef4444;">Magic</span></a>
+                <a href="password-generator.html" class="tool-card"><div class="icon">🛡️</div><h2>Password Generator</h2><p>Create strong, secure, and random passwords to protect your accounts.</p></a>
             </div>
         </main>
         <footer>
@@ -129,8 +129,8 @@
                 <a href="privacy.html">Privacy Policy</a>
                 <a href="about.html">About Us</a>
             </div>
-            <button id="share-btn" class="btn-share"> Share with Friends</button>
-            <p style="margin-top: 16px;">� 2025 All rights reserved - MagicKit</p>
+            <button id="share-btn" class="btn-share">🔗 Share with Friends</button>
+            <p style="margin-top: 16px;">© 2025 All rights reserved - MagicKit</p>
         </footer>
     </div>
 
@@ -194,7 +194,7 @@
                     if (navigator.share) {
                         try { await navigator.share(shareData); } catch (err) { console.log('User cancelled sharing or an error occurred:', err); }
                     } else {
-                        try { await navigator.clipboard.writeText(window.location.href); shareBtn.textContent = ' Link Copied!'; setTimeout(() => { shareBtn.textContent = ' Share with Friends'; }, 2000);
+                        try { await navigator.clipboard.writeText(window.location.href); shareBtn.textContent = '✅ Link Copied!'; setTimeout(() => { shareBtn.textContent = '🔗 Share with Friends'; }, 2000);
                         } catch (err) { console.error('Failed to copy link: ', err); alert('Could not copy the link. Please copy it from the address bar.'); }
                     }
                 });
