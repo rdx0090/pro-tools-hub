@@ -137,35 +137,28 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            // --- VISITOR COUNTER LOGIC (FINAL, SIMPLE, DIRECT METHOD) ---
+            // --- VISITOR COUNTER LOGIC (FINAL, CountAPI METHOD) ---
             const totalVisitorsEl = document.getElementById('total-visitors');
             
-            async function getTotalVisitors() {
-                if (!totalVisitorsEl) return;
-                try {
-                    // Hum ab seedhe visitorbadge.io se data maang rahe hain.
-                    // 'json=true' parameter batata hai ki humein sirf data chahiye, image nahi.
-                    const response = await fetch('https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fmagickit.space&countColor=%2310B981&json=true');
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-
-                    const data = await response.json();
-                    
-                    // data.totalVisitors se count milta hai
-                    if (data && data.totalVisitors !== undefined) {
-                        totalVisitorsEl.textContent = data.totalVisitors;
-                    } else {
+            function updateVisitorCount() {
+                // Hum seedhe countapi.xyz se data maang rahe hain.
+                // 'magickit.space' ek unique key hai, aap ise badal bhi sakte hain.
+                fetch('https://api.countapi.xyz/hit/magickit.space/visits')
+                    .then(response => response.json())
+                    .then(data => {
+                        // data.value se count milta hai
+                        if (data && data.value !== undefined) {
+                            totalVisitorsEl.textContent = data.value;
+                        } else {
+                            totalVisitorsEl.textContent = 'N/A';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Failed to fetch total visitors:', error);
                         totalVisitorsEl.textContent = 'N/A';
-                    }
-
-                } catch (error) {
-                    console.error('Failed to fetch total visitors:', error);
-                    totalVisitorsEl.textContent = 'N/A';
-                }
+                    });
             }
-            getTotalVisitors();
+            updateVisitorCount(); // Page load hote hi function ko call karein
 
             // --- Baaki ka saara JavaScript bilkul waisa hi hai ---
             const searchIconBtn = document.querySelector('.search-btn-icon');
