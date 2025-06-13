@@ -4,9 +4,4 @@
       "source": "/api/removebg",
       "destination": "https://api.remove.bg/v1.0/removebg"
     },
-    {
-      "source": "/api/visitors",
-      "destination": "https://api.visitorbadge.io/api/visitors"
-    }
-  ]
-}
+   
