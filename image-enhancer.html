@@ -21,12 +21,14 @@
         header h1 { font-size: 2.5rem; }
         header p { font-size: 1.125rem; color: var(--text-secondary); }
         .card { background-color: var(--card-color); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color); margin-bottom: 24px; }
-        /* Naya badlav: Anchor tag ko button jaisa dikhana */
         a.btn-primary { text-decoration: none; display: inline-block; }
         .btn-primary { background-color: var(--accent-color); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; text-align: center; }
         .btn-primary:hover { background-color: var(--accent-hover); }
         .btn-primary:disabled { background-color: #374151; cursor: not-allowed; }
         .btn-secondary { background-color: #4b5563; }
+        /* Naye Buttons ke liye Style */
+        .btn-ad { background-color: #c2410c; margin-bottom: 10px; width: 100%; }
+        .btn-download-final { background-color: #16a34a; width: 100%; }
         .workspace { display: grid; grid-template-columns: 3fr 1fr; gap: 24px; align-items: flex-start; }
         #preview-container { text-align: center; }
         #preview-image { max-width: 100%; max-height: 500px; border-radius: 8px; border: 1px solid var(--border-color); }
@@ -46,21 +48,10 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>✨ Image Enhancer</h1>
-            <p>Adjust filters, click Enhance, and see the magic happen!</p>
-        </header>
-
-        <div class="card" id="upload-card">
-            <input type="file" id="file-input" accept="image/*" style="display: none;">
-            <button id="upload-btn" class="btn-primary">Upload Image</button>
-        </div>
-
+        <header><h1>✨ Image Enhancer</h1><p>Adjust filters, click Enhance, and see the magic happen!</p></header>
+        <div class="card" id="upload-card"><input type="file" id="file-input" accept="image/*" style="display: none;"><button id="upload-btn" class="btn-primary">Upload Image</button></div>
         <div id="workspace" class="workspace" style="display: none;">
-            <div id="image-area">
-                <div id="preview-container"><img id="preview-image" src="" alt="Your uploaded image"></div>
-                <div class="comparison-slider-container"></div>
-            </div>
+            <div id="image-area"><div id="preview-container"><img id="preview-image" src="" alt="Your uploaded image"></div><div class="comparison-slider-container"></div></div>
             <div class="controls card">
                 <h3>Filters</h3>
                 <div class="form-group"><label for="brightness">Brightness (<span id="brightness-value">100</span>%)</label><input type="range" id="brightness" min="0" max="200" value="100"></div>
@@ -73,19 +64,18 @@
                 <p class="processing-feedback" id="feedback-text"></p>
                 
                 <!-- ============================================= -->
-                <!--  DOWNLOAD BUTTON CODE BADLA GAYA HAI          -->
-                <!--  Yeh ab ek ANCHOR <a> TAG hai                -->
+                <!--  DOWNLOAD BUTTONS KA NAYA STRUCTURE           -->
                 <!-- ============================================= -->
-                <a id="download-btn" href="https://www.profitableratecpm.com/bytie05i?key=bfcd440f1bc025349f92af38380f1a74" target="_blank" class="btn-primary btn-secondary" style="display:none;">Download Enhanced Image</a>
+                <button id="download-btn" class="btn-primary btn-secondary" style="display:none;">Download Enhanced Image</button>
+                
+                <div id="ad-step-container" style="display:none; margin-top:10px;">
+                    <a id="ad-link-btn" href="https://www.profitableratecpm.com/bytie05i?key=bfcd440f1bc025349f92af38380f1a74" target="_blank" class="btn-primary btn-ad">Step 1: View Ad to Unlock</a>
+                    <button id="final-download-btn" class="btn-primary btn-download-final">Step 2: Download File</button>
+                </div>
             </div>
         </div>
-
-        <footer>
-            <p><a href="index.html" style="color: var(--accent-color);">← Back to Hub</a></p>
-            <p>© 2025 All rights reserved - Magic Kit</p>
-        </footer>
+        <footer><p><a href="index.html" style="color: var(--accent-color);">← Back to Hub</a></p><p>© 2025 All rights reserved - Magic Kit</p></footer>
     </div>
-
     <canvas id="processing-canvas" style="display:none;"></canvas>
 
     <script>
@@ -96,7 +86,7 @@
         const previewImage = document.getElementById('preview-image');
         const sliderContainer = document.querySelector('.comparison-slider-container');
         const enhanceBtn = document.getElementById('enhance-btn');
-        const downloadBtn = document.getElementById('download-btn'); // Yeh ab <a> tag hai
+        const downloadBtn = document.getElementById('download-btn');
         const loaderContainer = document.getElementById('loader-container');
         const feedbackText = document.getElementById('feedback-text');
         const processingCanvas = document.getElementById('processing-canvas');
@@ -105,83 +95,64 @@
         let originalImage = null;
         let originalFileName = 'enhanced.png';
 
+        // Naye Buttons
+        const adStepContainer = document.getElementById('ad-step-container');
+        const adLinkBtn = document.getElementById('ad-link-btn');
+        const finalDownloadBtn = document.getElementById('final-download-btn');
+
         uploadBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', handleImageUpload);
         enhanceBtn.addEventListener('click', processAndShowComparison);
         
         // =============================================
-        //  AD LOGIC BADAL GAYA HAI
+        //  AD LOGIC KA NAYA TARIKA
         // =============================================
+        
+        // 1. Jab user pehle 'Download' button par click kare
         downloadBtn.addEventListener('click', function() {
-            // Thodi der baad asli download shuru karo
-            setTimeout(function() {
-                downloadImage();
-            }, 300); // 300 milliseconds ka delay
+            downloadBtn.style.display = 'none'; // Pehla button chupao
+            adStepContainer.style.display = 'block'; // Do naye button dikhao
         });
+
+        // 2. Jab user 'Step 2: Download' par click kare
+        finalDownloadBtn.addEventListener('click', function() {
+            downloadImage(); // Asli download function call karo
+        });
+
 
         filterInputs.forEach(input => input.addEventListener('input', updateLabels));
 
-        function handleImageUpload(e) { /* ... (Koi badlav nahi) ... */
-            const file = e.target.files[0]; if (!file) return;
-            document.getElementById('upload-card').style.display = 'none';
-            workspace.style.display = 'grid';
-            originalFileName = file.name.replace(/\.[^/.]+$/, "") + "-enhanced.png";
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                originalImage = new Image();
-                originalImage.onload = () => { previewImage.src = originalImage.src; };
-                originalImage.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function updateLabels() { /* ... (Koi badlav nahi) ... */
-            filterInputs.forEach(input => { document.getElementById(`${input.id}-value`).textContent = input.value; });
-        }
-
-        function processAndShowComparison() { /* ... (Koi badlav nahi) ... */
+        function handleImageUpload(e) { /* ... (Koi badlav nahi) ... */ }
+        function updateLabels() { /* ... (Koi badlav nahi) ... */ }
+        function processAndShowComparison() {
+            // Logic to show download button
             if (!originalImage) return;
             enhanceBtn.style.display = 'none';
-            downloadBtn.style.display = 'none';
             feedbackText.style.display = 'none';
+            adStepContainer.style.display = 'none'; // Naye buttons ko bhi chupao
             loaderContainer.style.display = 'block';
             const startTime = performance.now();
             setTimeout(() => {
                 const filterString = Array.from(filterInputs).map(input => `${input.id}(${input.value}%)`).join(' ');
-                processingCanvas.width = originalImage.width;
-                processingCanvas.height = originalImage.height;
-                ctx.filter = filterString;
-                ctx.drawImage(originalImage, 0, 0);
+                processingCanvas.width = originalImage.width; processingCanvas.height = originalImage.height;
+                ctx.filter = filterString; ctx.drawImage(originalImage, 0, 0);
                 const enhancedSrc = processingCanvas.toDataURL('image/png');
                 loaderContainer.style.display = 'none';
                 confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
                 const duration = ((performance.now() - startTime) / 1000).toFixed(1);
-                feedbackText.textContent = `Enhanced in ${duration}s!`;
-                feedbackText.style.display = 'block';
-                previewContainer.style.display = 'none';
-                sliderContainer.style.display = 'block';
+                feedbackText.textContent = `Enhanced in ${duration}s!`; feedbackText.style.display = 'block';
+                previewContainer.style.display = 'none'; sliderContainer.style.display = 'block';
                 sliderContainer.innerHTML = `<img-comparison-slider><img slot="first" src="${originalImage.src}"><img slot="second" src="${enhancedSrc}"></img-comparison-slider>`;
-                downloadBtn.style.display = 'block';
-                enhanceBtn.textContent = '✨ Enhance Again';
-                enhanceBtn.style.display = 'block';
+                downloadBtn.style.display = 'block'; // Pehla download button dikhao
+                enhanceBtn.textContent = '✨ Enhance Again'; enhanceBtn.style.display = 'block';
             }, 500);
         }
-        
-        function downloadImage() { /* ... (Koi badlav nahi) ... */
-            if (!originalImage) return;
-            downloadBtn.disabled = true; // Yeh ab kaam nahi karega, par rehne do
-            downloadBtn.textContent = "Preparing Download...";
-            processingCanvas.toBlob((blob) => {
-                confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.download = originalFileName;
-                link.href = url;
-                link.click();
-                URL.revokeObjectURL(url);
-                downloadBtn.textContent = "Download Enhanced Image";
-            }, 'image/png');
-        }
+        function downloadImage() { /* ... (Koi badlav nahi) ... */ }
+
+        // Puraane functions ko waise hi copy kar lein...
+        function handleImageUpload(e) { const file = e.target.files[0]; if (!file) return; document.getElementById('upload-card').style.display = 'none'; workspace.style.display = 'grid'; originalFileName = file.name.replace(/\.[^/.]+$/, "") + "-enhanced.png"; const reader = new FileReader(); reader.onload = (event) => { originalImage = new Image(); originalImage.onload = () => { previewImage.src = originalImage.src; }; originalImage.src = event.target.result; }; reader.readAsDataURL(file); }
+        function updateLabels() { filterInputs.forEach(input => { document.getElementById(`${input.id}-value`).textContent = input.value; }); }
+        function downloadImage() { if (!originalImage) return; finalDownloadBtn.disabled = true; finalDownloadBtn.textContent = "Preparing..."; processingCanvas.toBlob((blob) => { confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.download = originalFileName; link.href = url; link.click(); URL.revokeObjectURL(url); finalDownloadBtn.disabled = false; finalDownloadBtn.textContent = "Step 2: Download File"; }, 'image/png'); }
     </script>
 </body>
 </html>
