@@ -3,33 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- ============================================= -->
-    <!--  SEO CHANGES START HERE                       -->
-    <!-- ============================================= -->
-    
     <title>Free Online Image Enhancer - Edit Photos with Filters | MagicKit</title>
     <meta name="description" content="Enhance your photos online for free. Adjust brightness, contrast, saturation, and apply grayscale or sepia filters instantly with MagicKit's easy-to-use image editor.">
     <meta name="keywords" content="image enhancer, photo editor, online photo editing, image filters, free photo editor, edit images, adjust brightness, contrast, saturation, MagicKit">
-
-       <!-- ============================================= -->
-    <!--  FAVICON ADDED HERE (SINGLE LINE SOLUTION)    -->
-    <!-- ============================================= -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233B82F6' fill-rule='evenodd' d='M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z' clip-rule='evenodd'/%3E%3C/svg%3E">
-
     <script type="module" src="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/index.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/img-comparison-slider@8/dist/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb;
-            --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb;
-            --border-color: #374151; --success-color: #10b981;
-        }
+        :root { --bg-color: #111827; --card-color: #1f2937; --text-color: #e5e7eb; --text-secondary: #9ca3af; --accent-color: #3b82f6; --accent-hover: #2563eb; --border-color: #374151; --success-color: #10b981; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 24px; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 1024px; }
         header { text-align: center; margin-bottom: 32px; }
@@ -40,14 +25,12 @@
         .btn-primary:hover { background-color: var(--accent-hover); }
         .btn-primary:disabled { background-color: #374151; cursor: not-allowed; }
         .btn-secondary { background-color: #4b5563; }
-
         .workspace { display: grid; grid-template-columns: 3fr 1fr; gap: 24px; align-items: flex-start; }
         #preview-container { text-align: center; }
         #preview-image { max-width: 100%; max-height: 500px; border-radius: 8px; border: 1px solid var(--border-color); }
         .comparison-slider-container { display: none; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; width: 100%; }
         img-comparison-slider { width: 100%; --divider-width: 3px; --divider-color: var(--accent-color); }
         img-comparison-slider img { width: 100%; height: auto; object-fit: contain; }
-
         .controls .form-group { margin-bottom: 16px; }
         .controls label { display: block; margin-bottom: 8px; color: var(--text-secondary); }
         .controls input[type="range"] { width: 100%; }
@@ -56,7 +39,6 @@
         .loader { margin: 8px auto; width: 20px; height: 20px; border: 3px solid var(--border-color); border-top: 3px solid var(--accent-color); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         footer { text-align: center; margin-top: 48px; color: var(--text-secondary); font-size: 0.9rem; }
-
         @media (max-width: 768px) { .workspace { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -73,15 +55,10 @@
         </div>
 
         <div id="workspace" class="workspace" style="display: none;">
-            <!-- Step 2 and 4: Image Preview and Comparison -->
             <div id="image-area">
-                <div id="preview-container">
-                    <img id="preview-image" src="" alt="Your uploaded image">
-                </div>
+                <div id="preview-container"><img id="preview-image" src="" alt="Your uploaded image"></div>
                 <div class="comparison-slider-container"></div>
             </div>
-
-            <!-- Step 3: Controls -->
             <div class="controls card">
                 <h3>Filters</h3>
                 <div class="form-group"><label for="brightness">Brightness (<span id="brightness-value">100</span>%)</label><input type="range" id="brightness" min="0" max="200" value="100"></div>
@@ -89,7 +66,6 @@
                 <div class="form-group"><label for="saturate">Saturation (<span id="saturate-value">100</span>%)</label><input type="range" id="saturate" min="0" max="200" value="100"></div>
                 <div class="form-group"><label for="grayscale">Grayscale (<span id="grayscale-value">0</span>%)</label><input type="range" id="grayscale" min="0" max="100" value="0"></div>
                 <div class="form-group"><label for="sepia">Sepia (<span id="sepia-value">0</span>%)</label><input type="range" id="sepia" min="0" max="100" value="0"></div>
-
                 <button id="enhance-btn" class="btn-primary" style="width:100%; margin-top: 16px;">✨ Enhance Image</button>
                 <div id="loader-container" class="loader-container"><div class="loader"></div><p>Processing...</p></div>
                 <p class="processing-feedback" id="feedback-text"></p>
@@ -119,14 +95,38 @@
         const processingCanvas = document.getElementById('processing-canvas');
         const ctx = processingCanvas.getContext('2d');
         const filterInputs = document.querySelectorAll('.controls input[type="range"]');
-
         let originalImage = null;
         let originalFileName = 'enhanced.png';
 
         uploadBtn.addEventListener('click', () => fileInput.click());
         fileInput.addEventListener('change', handleImageUpload);
         enhanceBtn.addEventListener('click', processAndShowComparison);
-        downloadBtn.addEventListener('click', downloadImage); // Updated function call
+        
+        // =============================================
+        //  AD LOGIC STARTS HERE
+        // =============================================
+        
+        // Puraana event listener hata diya gaya hai, naya wala neeche hai
+        // downloadBtn.addEventListener('click', downloadImage); 
+        
+        const adLink = 'https://www.profitableratecpm.com/bytie05i?key=bfcd440f1bc025349f92af38380f1a74';
+        let adShown = false; // Yeh check karega ki ad dikh chuka hai ya nahi
+
+        // Naya event listener jo ad dikhayega
+        downloadBtn.addEventListener('click', function(event) {
+            event.preventDefault(); // Asli click ko roko
+            
+            // Ad ko naye tab mein kholo
+            window.open(adLink, '_blank');
+            
+            // Ab asli download function ko call karo
+            downloadImage();
+        });
+        
+        // =============================================
+        //  AD LOGIC ENDS HERE
+        // =============================================
+
         filterInputs.forEach(input => input.addEventListener('input', updateLabels));
 
         function handleImageUpload(e) {
@@ -174,35 +174,22 @@
                 enhanceBtn.style.display = 'block';
             }, 500);
         }
-
-        // *** YEH FUNCTION UPDATE HUA HAI ***
+        
         function downloadImage() {
             if (!originalImage) return;
-
             downloadBtn.disabled = true;
             downloadBtn.textContent = "Preparing Download...";
-
-            // canvas.toBlob() istemal karein, jo bahut fast hai
             processingCanvas.toBlob((blob) => {
-                // Celebration ab yahan hoga, jab file taiyaar hai
                 confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
-
-                // Download link banayein
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.download = originalFileName;
                 link.href = url;
-
-                // Turant download start karein
                 link.click();
-
-                // Memory ko free karein
                 URL.revokeObjectURL(url);
-
-                // Button ko wapas normal state mein layein
                 downloadBtn.disabled = false;
                 downloadBtn.textContent = "Download Enhanced Image";
-            }, 'image/png'); // Format batayein
+            }, 'image/png');
         }
     </script>
 </body>
